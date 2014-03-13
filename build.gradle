@@ -9,17 +9,3 @@ dependencies {
     testCompile "junit:junit:4.+"
     testCompile "org.mockito:mockito-all:1.9.5"
 }
-
-sourceSets {
-    main {
-        java {
-            srcDir 'src/main/java'
-        }
-    }
-    
-    test {
-    	java {
-    		srcDir 'src/test/java'
-    	}
-    }
-}

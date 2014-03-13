@@ -1,9 +1,15 @@
+# Gradle #
 /.gradle
 
+
+
+
+# Misc #
 *.class
 
 # Package Files #
 *.war
 *.ear
+/.settings
 /build
 /bin
