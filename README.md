@@ -1,2 +1,2 @@
-auto-ftp
+Auto FTP
 ========
