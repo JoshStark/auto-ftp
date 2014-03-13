@@ -1,5 +1,8 @@
+/.gradle
+
 *.class
 
 # Package Files #
 *.war
 *.ear
+/build
