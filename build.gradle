@@ -6,6 +6,8 @@ repositories {
 }
 
 dependencies {
-    testCompile "junit:junit:4.+"
-    testCompile "org.mockito:mockito-all:1.9.5"
+	compile 'commons-net:commons-net:3.3'
+
+    testCompile 'junit:junit:4.+'
+    testCompile 'org.mockito:mockito-all:1.9.5'
 }
