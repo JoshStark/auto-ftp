@@ -1,7 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
-name 'auto-ftp'
 group 'com.github.autoftp'
 version '0.0.1'
 
