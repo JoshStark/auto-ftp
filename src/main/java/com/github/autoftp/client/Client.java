@@ -1,12 +1,26 @@
 package com.github.autoftp.client;
 
-public interface Client {
+public abstract class Client {
 
-	void setCredentials(String username, String password);
-	void setHost(String host);
-	void setPort(int port);
+	protected String username;
+	protected String password;
+	protected String host;
+	protected int port;
 	
-	void connect();
-	void disconnect();
+	public void setCredentials(String username, String password) {
+		
+		this.username = username;
+		this.password = password;		
+	}
+
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
 	
+	public abstract void connect();
+	public abstract void disconnect();
 }

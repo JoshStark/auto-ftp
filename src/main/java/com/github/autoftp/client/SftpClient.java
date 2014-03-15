@@ -1,32 +1,33 @@
 package com.github.autoftp.client;
 
-public class SftpClient implements Client {
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
 
-	@Override
-	public void setCredentials(String username, String password) {
-		// TODO Auto-generated method stub
-		
+public class SftpClient extends Client {
+
+	private JSch jsch;
+	
+	public SftpClient() {
+		this.jsch = new JSch();
 	}
-
-	@Override
-	public void setHost(String host) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setPort(int port) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
+	
 	public void connect() {
-		// TODO Auto-generated method stub
+		
+		try {
+			
+			Session session = jsch.getSession(username, host, port);
+			session.setConfig("StrictHostKeyChecking", "no");
+			session.setPassword(password);
+			
+			session.connect();
+			
+		} catch (JSchException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
-	@Override
 	public void disconnect() {
 		// TODO Auto-generated method stub
 		

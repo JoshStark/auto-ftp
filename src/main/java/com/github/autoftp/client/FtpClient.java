@@ -5,12 +5,7 @@ import java.net.SocketException;
 
 import org.apache.commons.net.ftp.FTPClient;
 
-public class FtpClient implements Client {
-
-	private String username;
-	private String password;
-	private String host;
-	private int port;
+public class FtpClient extends Client {
 	
 	private FTPClient ftpClient;
 	
@@ -18,29 +13,10 @@ public class FtpClient implements Client {
 		this.ftpClient = new FTPClient();
 	}
 	
-	@Override
-	public void setCredentials(String username, String password) {
-		
-		this.username = username;
-		this.password = password;		
-	}
-
-	@Override
-	public void setHost(String host) {
-		this.host = host;
-	}
-
-	@Override
-	public void setPort(int port) {
-		this.port = port;
-		
-	}
-
-	@Override
 	public void connect() {
 		
 		try {
-			this.ftpClient.connect(this.host);
+			this.ftpClient.connect(host);
 		}
 		catch (SocketException e) {
 			
@@ -51,7 +27,6 @@ public class FtpClient implements Client {
 		}		
 	}
 
-	@Override
 	public void disconnect() {
 		
 		try {
