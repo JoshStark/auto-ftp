@@ -1,15 +1,20 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
+group 'com.github.autoftp'
+version '0.0.1'
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
-	compile 'commons-net:commons-net:3.3'
+    compile 'commons-net:commons-net:3.3'
+    compile 'joda-time:joda-time:2.3'
 
-    testCompile 'junit:junit:4.+'
+    testCompile 'junit:junit:4.11'
     testCompile 'org.mockito:mockito-all:1.9.5'
+    testCompile 'org.hamcrest:hamcrest-all:1.3'
 }
 
 task wrapper(type: Wrapper) {
