@@ -1,5 +1,6 @@
 package com.github.autoftp.connection;
 
+import com.github.autoftp.client.Client;
 import com.github.autoftp.client.FtpClient;
 import com.github.autoftp.client.SftpClient;
 
@@ -9,7 +10,7 @@ public class FtpClientFactory {
 		FTP, SFTP
 	}
 
-	public FtpClient getClient(ClientType clientType) {
+	public Client getClient(ClientType clientType) {
 
 		if (clientType == ClientType.FTP)
 			return new FtpClient();
