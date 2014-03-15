@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    compile 'commons-net:commons-net:3.3'
+    compile 'com.jcraft:jsch:0.1.50'
     compile 'joda-time:joda-time:2.3'
 
     testCompile 'junit:junit:4.11'
