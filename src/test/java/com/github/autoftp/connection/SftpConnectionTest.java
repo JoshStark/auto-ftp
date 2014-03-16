@@ -21,7 +21,7 @@ import com.github.autoftp.exception.NoSuchDirectoryException;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
 import com.jcraft.jsch.SftpATTRS;
-import com.jcraft.jsch.SftpException; 
+import com.jcraft.jsch.SftpException;
 
 public class SftpConnectionTest {
 	
@@ -102,21 +102,32 @@ public class SftpConnectionTest {
 		assertThat(files.get(2).getFullPath(), is(equalTo(DIRECTORY + "/File 3")));
 	}
 	
+	@Test
+	public void returnedFtpFilesShouldHaveCorrectModifiedDateTimesAgainstThem() {
+		
+		List<FtpFile> files = sftpConnection.listFiles();
+		
+		assertThat(files.get(0).getLastModified().toString("dd/MM/yyyy HH:mm:ss"), is(equalTo("11/03/2014 08:07:45")));
+		assertThat(files.get(1).getLastModified().toString("dd/MM/yyyy HH:mm:ss"), is(equalTo("12/03/2014 19:22:41")));
+		assertThat(files.get(2).getLastModified().toString("dd/MM/yyyy HH:mm:ss"), is(equalTo("08/02/2014 17:09:24")));
+	}
+	
 	private Vector<LsEntry> createEntries() {
 		
 		Vector<LsEntry> vector = new Vector<LsEntry>();
 		
-		vector.add(createSingleEntry("File 1", 123l));
-		vector.add(createSingleEntry("File 2", 456l));
-		vector.add(createSingleEntry("File 3", 789l));
+		vector.add(createSingleEntry("File 1", 123l, 1394525265)); // March 11 2014 08:07:45
+		vector.add(createSingleEntry("File 2", 456l, 1394652161)); // March 12 3014 19:22:41
+		vector.add(createSingleEntry("File 3", 789l, 1391879364)); // Feb 08 2014 17:09:24
 		
 		return vector;
 	}
 	
-	private LsEntry createSingleEntry(String fileName, long size) {
+	private LsEntry createSingleEntry(String fileName, long size, int mTime) {
 	
 		SftpATTRS attributes = mock(SftpATTRS.class);
 		when(attributes.getSize()).thenReturn(size);
+		when(attributes.getMTime()).thenReturn(mTime);
 		
 		LsEntry entry = mock(LsEntry.class);
 		when(entry.getAttrs()).thenReturn(attributes);
