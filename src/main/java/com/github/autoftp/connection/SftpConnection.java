@@ -20,7 +20,7 @@ public class SftpConnection implements Connection {
 	public void setDirectory(String directory) {
 		
 		try {
-			this.channel.ls(directory);
+			this.channel.cd(directory);
 		} catch (SftpException e) {
 			throw new NoSuchDirectoryException(String.format(DIRECTORY_DOES_NOT_EXIST_MESSAGE, directory), e);
 		}

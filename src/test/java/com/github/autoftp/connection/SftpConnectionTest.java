@@ -2,6 +2,7 @@ package com.github.autoftp.connection;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -10,6 +11,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 
 import com.github.autoftp.exception.NoSuchDirectoryException;
 import com.jcraft.jsch.ChannelSftp;
@@ -38,7 +40,7 @@ public class SftpConnectionTest {
 		
 		sftpConnection.setDirectory(directory);
 		
-		verify(mockChannel).ls(directory);
+		verify(mockChannel).cd(directory);
 	}
 	
 	@Test
@@ -49,7 +51,7 @@ public class SftpConnectionTest {
 
 		String directory = "not/a/directory";
 		
-		when(mockChannel.ls(directory)).thenThrow(new SftpException(0, ""));
+		doThrow(new SftpException(0, "")).when(mockChannel).cd(directory);
 		
 		sftpConnection.setDirectory(directory);
 	}
