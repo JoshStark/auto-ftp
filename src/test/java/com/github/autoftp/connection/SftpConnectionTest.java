@@ -2,33 +2,45 @@ package com.github.autoftp.connection;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.Vector;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
 
 import com.github.autoftp.exception.NoSuchDirectoryException;
 import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.SftpException;
+import com.jcraft.jsch.ChannelSftp.LsEntry;
+import com.jcraft.jsch.SftpATTRS;
+import com.jcraft.jsch.SftpException; 
 
 public class SftpConnectionTest {
 	
 	private SftpConnection sftpConnection;
 	private ChannelSftp mockChannel;
 	
+	private static final String DIRECTORY = "this/is/the/pwd";
+	
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
 	
 	@Before
-	public void setUp() {
+	public void setUp() throws SftpException {
 		
 		mockChannel = mock(ChannelSftp.class);
+		
+		Vector<LsEntry> lsEntries  = createEntries();
+		when(mockChannel.ls(".")).thenReturn(lsEntries);
+		when(mockChannel.pwd()).thenReturn(DIRECTORY);
 		
 		sftpConnection = new SftpConnection(mockChannel);		
 	}
@@ -54,6 +66,63 @@ public class SftpConnectionTest {
 		doThrow(new SftpException(0, "")).when(mockChannel).cd(directory);
 		
 		sftpConnection.setDirectory(directory);
+	}
+	
+	@Test
+	public void listFilesMethodShouldCallOnChannelLsMethodForPresentDirectory() throws SftpException {
+		
+		sftpConnection.listFiles();
+		
+		verify(mockChannel).ls(".");
+	} 
+	
+	@Test
+	public void listFilesMethodShouldCallOnChannelPwdMethodToGetCurrentDirectory() throws SftpException {
+		
+		sftpConnection.listFiles();
+		
+		verify(mockChannel, times(1)).pwd();
+	}
+	
+	@Test
+	public void lsEntriesReturnedFromChannelShouldBeParsedIntoFtpFileAndReturnedInList() {
+		
+		List<FtpFile> files = sftpConnection.listFiles();
+		
+		assertThat(files.get(0).getName(), is(equalTo("File 1")));
+		assertThat(files.get(0).getSize(), is(equalTo(123l)));
+		assertThat(files.get(0).getFullPath(), is(equalTo(DIRECTORY + "/File 1")));
+		
+		assertThat(files.get(1).getName(), is(equalTo("File 2")));
+		assertThat(files.get(1).getSize(), is(equalTo(456l)));
+		assertThat(files.get(1).getFullPath(), is(equalTo(DIRECTORY + "/File 2")));
+		
+		assertThat(files.get(2).getName(), is(equalTo("File 3")));
+		assertThat(files.get(2).getSize(), is(equalTo(789l)));
+		assertThat(files.get(2).getFullPath(), is(equalTo(DIRECTORY + "/File 3")));
+	}
+	
+	private Vector<LsEntry> createEntries() {
+		
+		Vector<LsEntry> vector = new Vector<LsEntry>();
+		
+		vector.add(createSingleEntry("File 1", 123l));
+		vector.add(createSingleEntry("File 2", 456l));
+		vector.add(createSingleEntry("File 3", 789l));
+		
+		return vector;
+	}
+	
+	private LsEntry createSingleEntry(String fileName, long size) {
+	
+		SftpATTRS attributes = mock(SftpATTRS.class);
+		when(attributes.getSize()).thenReturn(size);
+		
+		LsEntry entry = mock(LsEntry.class);
+		when(entry.getAttrs()).thenReturn(attributes);
+		when(entry.getFilename()).thenReturn(fileName);		
+		
+		return entry;
 	}
 
 }

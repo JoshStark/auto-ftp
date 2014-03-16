@@ -6,27 +6,23 @@ public class FtpFile {
 	private long size;
 	private String fullPath;
 
+	protected FtpFile(String name, long size, String fullPath) {
+		
+		this.name = name;
+		this.size = size;
+		this.fullPath = fullPath;
+	}
+	
 	public String getName() {
 		return name;
-	}
-
-	protected void setName(String name) {
-		this.name = name;
 	}
 
 	public long getSize() {
 		return size;
 	}
 
-	protected void setSize(long size) {
-		this.size = size;
-	}
-
 	public String getFullPath() {
 		return fullPath;
 	}
 
-	protected void setFullPath(String fullPath) {
-		this.fullPath = fullPath;
-	}
 }
