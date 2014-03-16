@@ -1,5 +1,7 @@
 package com.github.autoftp.client;
 
+import com.github.autoftp.connection.Connection;
+
 public abstract class Client {
 
 	protected String username;
@@ -21,6 +23,6 @@ public abstract class Client {
 		this.port = port;
 	}
 	
-	public abstract void connect();
+	public abstract Connection connect();
 	public abstract void disconnect();
 }

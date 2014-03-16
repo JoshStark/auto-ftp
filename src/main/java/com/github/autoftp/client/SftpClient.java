@@ -1,5 +1,6 @@
 package com.github.autoftp.client;
 
+import com.github.autoftp.connection.Connection;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -12,7 +13,7 @@ public class SftpClient extends Client {
 		this.jsch = new JSch();
 	}
 	
-	public void connect() {
+	public Connection connect() {
 		
 		try {
 			
@@ -26,6 +27,7 @@ public class SftpClient extends Client {
 			e.printStackTrace();
 		}
 		
+		return null;
 	}
 
 	public void disconnect() {

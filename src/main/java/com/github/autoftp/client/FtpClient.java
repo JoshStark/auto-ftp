@@ -5,6 +5,8 @@ import java.net.SocketException;
 
 import org.apache.commons.net.ftp.FTPClient;
 
+import com.github.autoftp.connection.Connection;
+
 public class FtpClient extends Client {
 	
 	private FTPClient ftpClient;
@@ -13,7 +15,7 @@ public class FtpClient extends Client {
 		this.ftpClient = new FTPClient();
 	}
 	
-	public void connect() {
+	public Connection connect() {
 		
 		try {
 			this.ftpClient.connect(host);
@@ -24,7 +26,9 @@ public class FtpClient extends Client {
 		} catch (IOException e) {
 			
 			e.printStackTrace();
-		}		
+		}	
+		
+		return null;
 	}
 
 	public void disconnect() {
