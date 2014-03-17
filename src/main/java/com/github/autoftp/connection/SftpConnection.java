@@ -14,9 +14,11 @@ public class SftpConnection implements Connection {
 	private static final String DIRECTORY_DOES_NOT_EXIST_MESSAGE = "Directory %s does not exist.";
 
 	private ChannelSftp channel;
+	private String currentDirectory;
 
 	public SftpConnection(ChannelSftp channel) {
 		this.channel = channel;
+		this.currentDirectory = ".";
 	}
 
 	@Override
@@ -41,10 +43,10 @@ public class SftpConnection implements Connection {
 		try {
 
 			Vector<LsEntry> lsEntries = this.channel.ls(".");
-			String currentDirectory = this.channel.pwd();
+			this.currentDirectory = this.channel.pwd();
 
 			for (LsEntry entry : lsEntries)
-				files.add(toFtpFile(entry, currentDirectory));
+				files.add(toFtpFile(entry));
 
 		} catch (SftpException e) {
 			// TODO Auto-generated catch block
@@ -60,11 +62,11 @@ public class SftpConnection implements Connection {
 
 	}
 
-	private FtpFile toFtpFile(LsEntry lsEntry, String currentDirectory) {
+	private FtpFile toFtpFile(LsEntry lsEntry) {
 
 		String name = lsEntry.getFilename();
 		long fileSize = lsEntry.getAttrs().getSize();
-		String fullPath = String.format("%s/%s", currentDirectory, lsEntry.getFilename());
+		String fullPath = String.format("%s/%s", this.currentDirectory, lsEntry.getFilename());
 		int mTime = lsEntry.getAttrs().getMTime();
 		
 		return new FtpFile(name, fileSize, fullPath, (long) mTime);

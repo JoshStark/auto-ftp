@@ -1,9 +1,8 @@
 package com.github.autoftp.client;
 
 import com.github.autoftp.connection.Connection;
-import com.github.autoftp.connection.SftpConnection;
+import com.github.autoftp.connection.ConnectionFactory;
 import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -13,9 +12,11 @@ public class SftpClient extends Client {
 	private static final String SFTP = "sftp";
 
 	private JSch jsch;
+	private ConnectionFactory connectionFactory;
 
 	public SftpClient() {
 		this.jsch = new JSch();
+		this.connectionFactory = new ConnectionFactory();
 	}
 
 	public Connection connect() {
@@ -38,7 +39,7 @@ public class SftpClient extends Client {
 			e.printStackTrace();
 		}
 
-		return new SftpConnection((ChannelSftp) channel);
+		return connectionFactory.createSftpConnection(channel);
 	}
 
 	public void disconnect() {
