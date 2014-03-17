@@ -8,4 +8,8 @@ Project Status
 
 Not even close to finished.
 
+
+Build Status
+------------
+
 [![Build Status](https://travis-ci.org/JAGFin1/auto-ftp.png?branch=master)](https://travis-ci.org/JAGFin1/auto-ftp)
