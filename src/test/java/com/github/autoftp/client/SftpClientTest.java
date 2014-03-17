@@ -1,5 +1,6 @@
 package com.github.autoftp.client;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -9,7 +10,9 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Answers;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
@@ -19,6 +22,7 @@ import org.mockito.Mockito;
 import com.github.autoftp.connection.Connection;
 import com.github.autoftp.connection.ConnectionFactory;
 import com.github.autoftp.connection.SftpConnection;
+import com.github.autoftp.exception.NotConnectedException;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
@@ -38,6 +42,9 @@ public class SftpClientTest {
 	@Mock
 	private ConnectionFactory mockConnectionFactory;
 
+	@Rule
+	public ExpectedException expectedException = ExpectedException.none();
+	
 	@Before
 	public void setUp() throws JSchException {
 
@@ -99,5 +106,28 @@ public class SftpClientTest {
 		Connection connection = sftpClient.connect();
 
 		assertThat(connection, is(instanceOf(SftpConnection.class)));
+	}
+	
+	@Test
+	public void disconnectMethodShouldDisconnectUnderlyingChannelAndSession() throws JSchException {
+		
+		Session mockSession = mockJsch.getSession("user", "host", 999);
+		Channel mockChannel = mockSession.openChannel(SFTP);
+		
+		sftpClient.connect();
+		sftpClient.disconnect();
+		
+		verify(mockSession).disconnect();
+		verify(mockChannel).disconnect();
+	}
+	
+	@Test
+	public void disconnectMethodShouldThrowExceptionWhenNotInitiallyConnected() {
+		
+		expectedException.expect(NotConnectedException.class);
+		expectedException.expectMessage(is(equalTo("The underlying connection was never initially made.")));
+		
+		sftpClient.disconnect();
+		
 	}
 }

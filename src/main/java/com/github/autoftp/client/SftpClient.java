@@ -2,6 +2,7 @@ package com.github.autoftp.client;
 
 import com.github.autoftp.connection.Connection;
 import com.github.autoftp.connection.ConnectionFactory;
+import com.github.autoftp.exception.NotConnectedException;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -14,6 +15,9 @@ public class SftpClient extends Client {
 	private JSch jsch;
 	private ConnectionFactory connectionFactory;
 
+	private Session session;
+	private Channel channel;
+	
 	public SftpClient() {
 		this.jsch = new JSch();
 		this.connectionFactory = new ConnectionFactory();
@@ -21,8 +25,8 @@ public class SftpClient extends Client {
 
 	public Connection connect() {
 
-		Session session = null;
-		Channel channel = null;
+		session = null;
+		channel = null;
 
 		try {
 
@@ -43,8 +47,12 @@ public class SftpClient extends Client {
 	}
 
 	public void disconnect() {
-		// TODO Auto-generated method stub
-
+		
+		if(null == channel || null == session)
+			throw new NotConnectedException("The underlying connection was never initially made.");
+		
+		channel.disconnect();
+		session.disconnect();
 	}
 
 }
