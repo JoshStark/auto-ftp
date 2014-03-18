@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.github.autoftp.exception.DownloadFailedException;
+import com.github.autoftp.exception.FileListingException;
 import com.github.autoftp.exception.NoSuchDirectoryException;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
@@ -79,16 +80,29 @@ public class SftpConnectionTest {
 	}
 
 	@Test
-	public void listFilesMethodShouldCallOnChannelPwdMethodToGetCurrentDirectory() throws SftpException {
+	public void setDirectoryMethodShouldCallOnChannelPwdMethodToGetCurrentDirectory() throws SftpException {
 
-		sftpConnection.listFiles();
+		sftpConnection.setDirectory(DIRECTORY);
 
 		verify(mockChannel, times(1)).pwd();
+	}
+	
+	@Test
+	public void whenLsCommandThrowsExceptionThenItShouldBeCaughtAndWrappedInFileListingExcepion() throws SftpException {
+		
+		expectedException.expect(FileListingException.class);
+		expectedException.expectMessage(is(equalTo("Unable to list files in directory .")));
+		
+		when(mockChannel.ls(".")).thenThrow(new SftpException(999, ""));
+		
+		sftpConnection.listFiles();
 	}
 
 	@Test
 	public void lsEntriesReturnedFromChannelShouldBeParsedIntoFtpFileAndReturnedInList() {
 
+		sftpConnection.setDirectory(DIRECTORY);
+		
 		List<FtpFile> files = sftpConnection.listFiles();
 
 		assertThat(files.get(0).getName(), is(equalTo("File 1")));

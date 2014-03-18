@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Vector;
 
 import com.github.autoftp.exception.DownloadFailedException;
+import com.github.autoftp.exception.FileListingException;
 import com.github.autoftp.exception.NoSuchDirectoryException;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
@@ -28,6 +29,7 @@ public class SftpConnection implements Connection {
 		try {
 
 			this.channel.cd(directory);
+			this.currentDirectory = this.channel.pwd();
 
 		} catch (SftpException e) {
 
@@ -44,14 +46,13 @@ public class SftpConnection implements Connection {
 		try {
 
 			Vector<LsEntry> lsEntries = this.channel.ls(".");
-			this.currentDirectory = this.channel.pwd();
 
 			for (LsEntry entry : lsEntries)
 				files.add(toFtpFile(entry));
 
 		} catch (SftpException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			throw new FileListingException("Unable to list files in directory " + this.currentDirectory, e);
 		}
 
 		return files;
