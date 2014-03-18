@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import com.github.autoftp.exception.DownloadFailedException;
 import com.github.autoftp.exception.NoSuchDirectoryException;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
@@ -58,7 +59,15 @@ public class SftpConnection implements Connection {
 
 	@Override
 	public void download(FtpFile file, String localDirectory) {
-		// TODO Auto-generated method stub
+		
+		try {
+			
+	        this.channel.get(file.getName(), localDirectory);
+	        
+        } catch (SftpException e) {
+	        
+        	throw new DownloadFailedException("Unable to download file.", e);
+        }
 
 	}
 
