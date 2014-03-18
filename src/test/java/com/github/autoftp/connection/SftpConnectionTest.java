@@ -141,15 +141,9 @@ public class SftpConnectionTest {
 
 		Vector<LsEntry> vector = new Vector<LsEntry>();
 
-		vector.add(createSingleEntry("File 1", 123l, 1394525265)); // March 11
-																   // 2014
-																   // 08:07:45
-		vector.add(createSingleEntry("File 2", 456l, 1394652161)); // March 12
-																   // 3014
-																   // 19:22:41
-		vector.add(createSingleEntry("File 3", 789l, 1391879364)); // Feb 08
-																   // 2014
-																   // 17:09:24
+		vector.add(createSingleEntry("File 1", 123l, 1394525265));
+		vector.add(createSingleEntry("File 2", 456l, 1394652161));
+		vector.add(createSingleEntry("File 3", 789l, 1391879364));
 
 		return vector;
 	}
