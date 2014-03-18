@@ -39,7 +39,7 @@ public class SettingsProvider {
 	        
         } catch (ConfigurationException e) {
 	        
-        	throw new ConfigCorruptedException("Unable to save new configuration propery.", e);
+        	throw new ConfigCorruptedException("Unable to save new configuration property.", e);
         }
     }
 }

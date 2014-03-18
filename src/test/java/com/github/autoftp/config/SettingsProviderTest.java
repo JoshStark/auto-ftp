@@ -54,7 +54,7 @@ public class SettingsProviderTest {
 		doThrow(new ConfigurationException()).when(xmlConfiguration).save();
 		
 		expectedException.expect(ConfigCorruptedException.class);
-		expectedException.expectMessage(is(equalTo("Unable to save new configuration propery.")));
+		expectedException.expectMessage(is(equalTo("Unable to save new configuration property.")));
 		
 		settingsProvider.setDownloadDirectory(THIS_IS_A_DOWNLOAD_DIR);
 	}
