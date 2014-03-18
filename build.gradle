@@ -1,5 +1,8 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'application'
+
+mainClassName = 'com.github.autoftp.Main'
 
 group 'com.github.autoftp'
 version '0.0.1'
