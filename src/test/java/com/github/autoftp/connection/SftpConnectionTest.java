@@ -86,15 +86,15 @@ public class SftpConnectionTest {
 
 		verify(mockChannel, times(1)).pwd();
 	}
-	
+
 	@Test
 	public void whenLsCommandThrowsExceptionThenItShouldBeCaughtAndWrappedInFileListingExcepion() throws SftpException {
-		
+
 		expectedException.expect(FileListingException.class);
 		expectedException.expectMessage(is(equalTo("Unable to list files in directory .")));
-		
+
 		when(mockChannel.ls(".")).thenThrow(new SftpException(999, ""));
-		
+
 		sftpConnection.listFiles();
 	}
 
@@ -102,7 +102,7 @@ public class SftpConnectionTest {
 	public void lsEntriesReturnedFromChannelShouldBeParsedIntoFtpFileAndReturnedInList() {
 
 		sftpConnection.setDirectory(DIRECTORY);
-		
+
 		List<FtpFile> files = sftpConnection.listFiles();
 
 		assertThat(files.get(0).getName(), is(equalTo("File 1")));

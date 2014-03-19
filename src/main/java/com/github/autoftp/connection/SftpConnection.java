@@ -15,6 +15,8 @@ public class SftpConnection implements Connection {
 
 	private static final String DIRECTORY_DOES_NOT_EXIST_MESSAGE = "Directory %s does not exist.";
 
+	private static final int MILLIS = 1000;
+
 	private ChannelSftp channel;
 	private String currentDirectory;
 
@@ -51,7 +53,7 @@ public class SftpConnection implements Connection {
 				files.add(toFtpFile(entry));
 
 		} catch (SftpException e) {
-			
+
 			throw new FileListingException("Unable to list files in directory " + this.currentDirectory, e);
 		}
 
@@ -60,15 +62,15 @@ public class SftpConnection implements Connection {
 
 	@Override
 	public void download(FtpFile file, String localDirectory) {
-		
+
 		try {
-			
-	        this.channel.get(file.getName(), localDirectory);
-	        
-        } catch (SftpException e) {
-	        
-        	throw new DownloadFailedException("Unable to download file.", e);
-        }
+
+			this.channel.get(file.getName(), localDirectory);
+
+		} catch (SftpException e) {
+
+			throw new DownloadFailedException("Unable to download file.", e);
+		}
 
 	}
 
@@ -78,8 +80,8 @@ public class SftpConnection implements Connection {
 		long fileSize = lsEntry.getAttrs().getSize();
 		String fullPath = String.format("%s/%s", this.currentDirectory, lsEntry.getFilename());
 		int mTime = lsEntry.getAttrs().getMTime();
-		
-		return new FtpFile(name, fileSize, fullPath, (long) mTime);
+
+		return new FtpFile(name, fileSize, fullPath, (long) mTime * MILLIS);
 	}
 
 }

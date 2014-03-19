@@ -4,8 +4,6 @@ import org.joda.time.DateTime;
 
 public class FtpFile {
 
-	private static final int MILLIS = 1000;
-	
 	private String name;
 	private long size;
 	private String fullPath;
@@ -16,7 +14,7 @@ public class FtpFile {
 		this.name = name;
 		this.size = size;
 		this.fullPath = fullPath;
-		this.lastModified = new DateTime(mTime * MILLIS);
+		this.lastModified = new DateTime(mTime);
 	}
 
 	public String getName() {
