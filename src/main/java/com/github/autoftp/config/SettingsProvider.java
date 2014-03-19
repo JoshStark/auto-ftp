@@ -1,5 +1,8 @@
 package com.github.autoftp.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 
@@ -8,6 +11,7 @@ import com.github.autoftp.exception.ConfigCorruptedException;
 public class SettingsProvider {
 
 	private static final String APP_DOWNLOAD_DIR = "download-dir";
+	private static final String FILE_FILTER_LIST = "filters.expression";
 	
 	private XMLConfiguration xmlConfiguration;
 	
@@ -30,6 +34,24 @@ public class SettingsProvider {
 
 	public String getDownloadDirectory() {
 		return this.xmlConfiguration.getString(APP_DOWNLOAD_DIR);
+	}
+	
+	public void setFilterExpressions(List<String> filters) {
+		
+		this.xmlConfiguration.addProperty(FILE_FILTER_LIST, filters);
+		
+		saveConfig();
+	}
+	
+	public List<String> getFilterExpressions() {
+		
+		List<Object> configObjects = this.xmlConfiguration.getList(FILE_FILTER_LIST);
+		List<String> filters = new ArrayList<String>();
+		
+		for(Object object : configObjects) 
+			filters.add(object.toString());
+		
+		return filters;
 	}
 
 	private void saveConfig() {
