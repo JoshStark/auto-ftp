@@ -6,20 +6,31 @@ The idea behind Auto FTP is to listen on servers for files that move around ofte
 Project Status
 --------------
 
-**FTP Support**
-In Progress
+**General**
 
-**SFTP Support**
-Done
+|Feature|Status|
+|-------|------|
+|FTP Support|In progress|
+|SFTP Support|Done|
+|FTPS Support|Not yet implemented|
+|Proxy Support|Not yet implemented|
 
-**FTPS Support**
-Not Yet Implemented
+**User Configuration**
 
-**User Configuration** 
-Download directory can be set.
-Filter lists have not yet been implemented.
-Host config has not yet been implemented.
+|Feature|Status|
+|-------|------|
+|Download Directory|User can configure|
+|Host Settings|Not yet implemented|
+|File filtering|Not yet implemented|
 
+
+**User Interface**
+
+|Feature|Status|
+|-------|------|
+|Main screen|Not yet implemented|
+|Terminal panel|Not yet implemented|
+|Settings window|Not yet implemented|
 
 Build Status
 ------------
