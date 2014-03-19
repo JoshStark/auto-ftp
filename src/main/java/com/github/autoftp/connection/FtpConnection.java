@@ -10,11 +10,14 @@ import java.util.List;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
+import com.github.autoftp.exception.DownloadFailedException;
 import com.github.autoftp.exception.FileListingException;
 import com.github.autoftp.exception.NoSuchDirectoryException;
 
 public class FtpConnection implements Connection {
 
+	private static final String FILE_DOWNLOAD_FAILURE_MESSAGE = "Unable to download file %s";
+	private static final String FILE_STREAM_OPEN_FAIL_MESSAGE = "Unable to write to local directory %s";
 	private static final String FILE_LISTING_ERROR_MESSAGE = "Unable to list files in directory %s";
 	private static final String NO_SUCH_DIRECTORY_MESSAGE = "The directory %s doesn't exist on the remote server.";
 	private static final String UNABLE_TO_CD_MESSAGE = "Remote server was unable to change directory.";
@@ -75,16 +78,19 @@ public class FtpConnection implements Connection {
 		try {
 			OutputStream outputStream = new FileOutputStream(localDestination);
 
-			client.retrieveFile(file.getFullPath(), outputStream);
+			boolean hasDownloaded = client.retrieveFile(file.getFullPath(), outputStream);
+			
+			if(!hasDownloaded)
+				throw new DownloadFailedException("Server returned failure while downloading.");
+			
+			outputStream.close();
 
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			throw new DownloadFailedException(String.format(FILE_STREAM_OPEN_FAIL_MESSAGE, localDestination), e);
 
+		} catch (IOException e) {
+			throw new DownloadFailedException(String.format(FILE_DOWNLOAD_FAILURE_MESSAGE, file.getName()), e);
+		}
 	}
 
 	private FtpFile toFtpFile(FTPFile ftpFile) {

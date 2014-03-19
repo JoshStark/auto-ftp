@@ -142,7 +142,7 @@ public class SftpConnectionTest {
 	public void downloadMethodShouldThrowDownloadFailedExceptionWhenChannelThrowsSftpConnection() throws SftpException {
 
 		expectedException.expect(DownloadFailedException.class);
-		expectedException.expectMessage(is(equalTo("Unable to download file.")));
+		expectedException.expectMessage(is(equalTo("Unable to download file File Name.txt")));
 
 		doThrow(new SftpException(999, "")).when(mockChannel).get(anyString(), anyString());
 

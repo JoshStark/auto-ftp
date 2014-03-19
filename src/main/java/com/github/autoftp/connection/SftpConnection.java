@@ -70,7 +70,7 @@ public class SftpConnection implements Connection {
 
 		} catch (SftpException e) {
 
-			throw new DownloadFailedException("Unable to download file.", e);
+			throw new DownloadFailedException("Unable to download file " + file.getName(), e);
 		}
 
 	}
