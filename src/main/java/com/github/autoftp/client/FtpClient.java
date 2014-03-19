@@ -12,6 +12,7 @@ import com.github.autoftp.exception.ConnectionInitialisationException;
 
 public class FtpClient extends Client {
 
+	private static final int FIVE_MINUTES = 300;
 	private static final String UNABLE_TO_LOGIN_MESSAGE = "Unable to login for user %s";
 	private static final String CONNECTION_ERROR_MESSAGE = "Unable to connect to host %s on port %d";
 	private static final String STATUS_ERROR_MESSAGE = "The host %s on port %d returned a bad status code.";
@@ -34,6 +35,7 @@ public class FtpClient extends Client {
 				throw new ConnectionInitialisationException(String.format(STATUS_ERROR_MESSAGE, host, port));
 
 			this.ftpClient.enterLocalPassiveMode();
+			this.ftpClient.setControlKeepAliveTimeout(FIVE_MINUTES);
 
 			boolean hasLoggedIn = this.ftpClient.login(username, password);
 

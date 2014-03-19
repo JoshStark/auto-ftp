@@ -1,6 +1,9 @@
 package com.github.autoftp.connection;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +19,8 @@ public class FtpConnection implements Connection {
 	private static final String NO_SUCH_DIRECTORY_MESSAGE = "The directory %s doesn't exist on the remote server.";
 	private static final String UNABLE_TO_CD_MESSAGE = "Remote server was unable to change directory.";
 
+	private static final String FILE_SEPARATOR = System.getProperty("file.separator");
+
 	private FTPClient client;
 	private String currentDirectory;
 
@@ -25,16 +30,16 @@ public class FtpConnection implements Connection {
 	}
 
 	@Override
-	public void setDirectory(String directory) {
+	public void setRemoteDirectory(String directory) {
 
 		try {
 
-			boolean success = this.client.changeWorkingDirectory(directory);
+			boolean success = client.changeWorkingDirectory(directory);
 
 			if (!success)
 				throw new NoSuchDirectoryException(String.format(NO_SUCH_DIRECTORY_MESSAGE, directory));
 
-			this.currentDirectory = this.client.printWorkingDirectory();
+			currentDirectory = client.printWorkingDirectory();
 
 		} catch (IOException e) {
 
@@ -46,17 +51,17 @@ public class FtpConnection implements Connection {
 	public List<FtpFile> listFiles() {
 
 		List<FtpFile> files = new ArrayList<FtpFile>();
-		
+
 		try {
 
-			FTPFile[] ftpFiles = this.client.listFiles();
+			FTPFile[] ftpFiles = client.listFiles();
 
-			for(FTPFile file : ftpFiles) 
+			for (FTPFile file : ftpFiles)
 				files.add(toFtpFile(file));
-				
+
 		} catch (IOException e) {
 
-			throw new FileListingException(String.format(FILE_LISTING_ERROR_MESSAGE, this.currentDirectory), e);
+			throw new FileListingException(String.format(FILE_LISTING_ERROR_MESSAGE, currentDirectory), e);
 		}
 
 		return files;
@@ -64,17 +69,31 @@ public class FtpConnection implements Connection {
 
 	@Override
 	public void download(FtpFile file, String localDirectory) {
-		// TODO Auto-generated method stub
+
+		String localDestination = String.format("%s%s%s", localDirectory, FILE_SEPARATOR, file.getName());
+
+		try {
+			OutputStream outputStream = new FileOutputStream(localDestination);
+
+			client.retrieveFile(file.getFullPath(), outputStream);
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
-	
+
 	private FtpFile toFtpFile(FTPFile ftpFile) {
 
 		String name = ftpFile.getName();
 		long fileSize = ftpFile.getSize();
-		String fullPath = String.format("%s/%s", this.currentDirectory, ftpFile.getName());
+		String fullPath = String.format("%s/%s", currentDirectory, ftpFile.getName());
 		long mTime = ftpFile.getTimestamp().getTime().getTime();
-		
+
 		return new FtpFile(name, fileSize, fullPath, mTime);
 	}
 }

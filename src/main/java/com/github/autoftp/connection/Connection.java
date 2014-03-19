@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface Connection {
 
-	void setDirectory(String directory);
+	void setRemoteDirectory(String directory);
 	List<FtpFile> listFiles();
 		
 	void download(FtpFile file, String localDirectory);

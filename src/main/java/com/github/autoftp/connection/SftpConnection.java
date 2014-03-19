@@ -14,7 +14,8 @@ import com.jcraft.jsch.SftpException;
 public class SftpConnection implements Connection {
 
 	private static final String DIRECTORY_DOES_NOT_EXIST_MESSAGE = "Directory %s does not exist.";
-
+	private static final String FILE_SEPARATOR = System.getProperty("file.separator");
+	
 	private static final int MILLIS = 1000;
 
 	private ChannelSftp channel;
@@ -26,12 +27,12 @@ public class SftpConnection implements Connection {
 	}
 
 	@Override
-	public void setDirectory(String directory) {
+	public void setRemoteDirectory(String directory) {
 
 		try {
 
-			this.channel.cd(directory);
-			this.currentDirectory = this.channel.pwd();
+			channel.cd(directory);
+			currentDirectory = channel.pwd();
 
 		} catch (SftpException e) {
 
@@ -47,14 +48,14 @@ public class SftpConnection implements Connection {
 
 		try {
 
-			Vector<LsEntry> lsEntries = this.channel.ls(".");
+			Vector<LsEntry> lsEntries = channel.ls(".");
 
 			for (LsEntry entry : lsEntries)
 				files.add(toFtpFile(entry));
 
 		} catch (SftpException e) {
 
-			throw new FileListingException("Unable to list files in directory " + this.currentDirectory, e);
+			throw new FileListingException("Unable to list files in directory " + currentDirectory, e);
 		}
 
 		return files;
@@ -65,7 +66,7 @@ public class SftpConnection implements Connection {
 
 		try {
 
-			this.channel.get(file.getName(), localDirectory);
+			channel.get(file.getName(), localDirectory);
 
 		} catch (SftpException e) {
 
@@ -78,7 +79,7 @@ public class SftpConnection implements Connection {
 
 		String name = lsEntry.getFilename();
 		long fileSize = lsEntry.getAttrs().getSize();
-		String fullPath = String.format("%s/%s", this.currentDirectory, lsEntry.getFilename());
+		String fullPath = String.format("%s%s%s", currentDirectory, FILE_SEPARATOR, lsEntry.getFilename());
 		int mTime = lsEntry.getAttrs().getMTime();
 
 		return new FtpFile(name, fileSize, fullPath, (long) mTime * MILLIS);

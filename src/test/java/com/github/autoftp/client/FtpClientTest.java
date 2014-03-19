@@ -78,7 +78,7 @@ public class FtpClientTest {
 	}
 
 	@Test
-	public void connectMethodShouldEnterPassiveModeThenLoginToUnderlyingFtpClint() throws IOException {
+	public void connectMethodShouldEnterPassiveModeLoginToUnderlyingFtpClint() throws IOException {
 
 		ftpClient.connect();
 
@@ -88,6 +88,14 @@ public class FtpClientTest {
 		inOrder.verify(mockFtpClient).login(username, password);
 	}
 
+	@Test
+	public void connectMethodShouldSetKeepAliveCommandToEveryFiveMinutes() {
+		
+		ftpClient.connect();
+		
+		verify(mockFtpClient).setControlKeepAliveTimeout(300);
+	}
+	
 	@Test
 	public void connectMethodShouldReturnNewFtpConnectionTakingInUnderlyingFtpClient() {
 

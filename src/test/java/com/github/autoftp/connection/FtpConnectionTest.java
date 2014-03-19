@@ -3,16 +3,22 @@ package com.github.autoftp.connection;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
+import org.joda.time.DateTime;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,10 +29,15 @@ import com.github.autoftp.exception.NoSuchDirectoryException;
 
 public class FtpConnectionTest {
 
+	private static final String TEST_DOWNLOAD_FILE = "jUnit_Mock_File.txt";
 	private static final String DIRECTORY_PATH = "this/is/a/directory";
+	private static final String FILE_SEPARATOR = System.getProperty("file.separator");
+	
 	private FtpConnection ftpConnection;
 	private FTPClient mockFtpClient;
 
+	private File jUnitTestFile;
+	
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
 
@@ -43,12 +54,22 @@ public class FtpConnectionTest {
 		when(mockFtpClient.listFiles()).thenReturn(files);
 		
 		ftpConnection = new FtpConnection(mockFtpClient);
+		
+		jUnitTestFile = new File("." + FILE_SEPARATOR + TEST_DOWNLOAD_FILE);
+		jUnitTestFile.createNewFile();
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+				
+		if(!jUnitTestFile.delete())
+			throw new Exception("Couldn't delete test file");
 	}
 
 	@Test
 	public void whenSettingDirectoryThenFtpClientShouldBeCalledToChangeDirectory() throws IOException {
 
-		ftpConnection.setDirectory(DIRECTORY_PATH);
+		ftpConnection.setRemoteDirectory(DIRECTORY_PATH);
 
 		verify(mockFtpClient).changeWorkingDirectory(DIRECTORY_PATH);
 	}
@@ -61,7 +82,7 @@ public class FtpConnectionTest {
 
 		when(mockFtpClient.changeWorkingDirectory(DIRECTORY_PATH)).thenThrow(new IOException());
 
-		ftpConnection.setDirectory(DIRECTORY_PATH);
+		ftpConnection.setRemoteDirectory(DIRECTORY_PATH);
 	}
 
 	@Test
@@ -72,13 +93,13 @@ public class FtpConnectionTest {
 
 		when(mockFtpClient.changeWorkingDirectory(DIRECTORY_PATH)).thenReturn(false);
 
-		ftpConnection.setDirectory(DIRECTORY_PATH);
+		ftpConnection.setRemoteDirectory(DIRECTORY_PATH);
 	}
 
 	@Test
 	public void changingDirectoryShouldThenCallOnClientToGetWorkingDirectoryToSetFieldInConnection() throws IOException {
 
-		ftpConnection.setDirectory(DIRECTORY_PATH);
+		ftpConnection.setRemoteDirectory(DIRECTORY_PATH);
 
 		verify(mockFtpClient).printWorkingDirectory();
 	}
@@ -106,7 +127,7 @@ public class FtpConnectionTest {
 	public void whenListingFilesThenFileArrayThatListFilesReturnsShouldBeConvertedToListOfFtpFilesAndReturned()
 	        throws IOException {
 
-		ftpConnection.setDirectory(DIRECTORY_PATH);
+		ftpConnection.setRemoteDirectory(DIRECTORY_PATH);
 		
 		List<FtpFile> returnedFiles = ftpConnection.listFiles();
 		
@@ -131,6 +152,16 @@ public class FtpConnectionTest {
 		assertThat(files.get(0).getLastModified().toString("dd/MM/yyyy HH:mm:ss"), is(equalTo("19/03/2014 21:40:00")));
 		assertThat(files.get(1).getLastModified().toString("dd/MM/yyyy HH:mm:ss"), is(equalTo("19/03/2014 21:40:00")));
 		assertThat(files.get(2).getLastModified().toString("dd/MM/yyyy HH:mm:ss"), is(equalTo("19/03/2014 21:40:00")));
+	}
+
+	@Test
+	public void downloadMethodShouldCallOnFtpClientRetrieveFilesMethodWithRemoteFilename() throws IOException {
+		
+		FtpFile file = new FtpFile(TEST_DOWNLOAD_FILE, 1000, "/full/path/to/FileToDownload.txt", new DateTime().getMillis());
+		
+		ftpConnection.download(file, ".");
+		
+		verify(mockFtpClient).retrieveFile(eq(file.getFullPath()), any(OutputStream.class));
 	}
 	
 	private FTPFile[] createRemoteFTPFiles() {

@@ -53,7 +53,7 @@ public class SftpConnectionTest {
 
 		String directory = "directory/path";
 
-		sftpConnection.setDirectory(directory);
+		sftpConnection.setRemoteDirectory(directory);
 
 		verify(mockChannel).cd(directory);
 	}
@@ -68,7 +68,7 @@ public class SftpConnectionTest {
 
 		doThrow(new SftpException(0, "")).when(mockChannel).cd(directory);
 
-		sftpConnection.setDirectory(directory);
+		sftpConnection.setRemoteDirectory(directory);
 	}
 
 	@Test
@@ -82,7 +82,7 @@ public class SftpConnectionTest {
 	@Test
 	public void setDirectoryMethodShouldCallOnChannelPwdMethodToGetCurrentDirectory() throws SftpException {
 
-		sftpConnection.setDirectory(DIRECTORY);
+		sftpConnection.setRemoteDirectory(DIRECTORY);
 
 		verify(mockChannel, times(1)).pwd();
 	}
@@ -101,7 +101,7 @@ public class SftpConnectionTest {
 	@Test
 	public void lsEntriesReturnedFromChannelShouldBeParsedIntoFtpFileAndReturnedInList() {
 
-		sftpConnection.setDirectory(DIRECTORY);
+		sftpConnection.setRemoteDirectory(DIRECTORY);
 
 		List<FtpFile> files = sftpConnection.listFiles();
 
@@ -131,7 +131,7 @@ public class SftpConnectionTest {
 	@Test
 	public void downloadMethodShouldCallChannelGetMethodWithFtpFileNameAndDirectory() throws SftpException {
 
-		FtpFile file = new FtpFile("File Name.txt", 1000, "remote/server/dir/File Name.txt", 123456789);
+		FtpFile file = new FtpFile("File Name.txt", 1000, "/remote/server/dir/File Name.txt", 123456789);
 
 		sftpConnection.download(file, "some/directory");
 
