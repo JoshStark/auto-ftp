@@ -1,7 +1,15 @@
 Auto FTP
 ========
 
-The idea behind Auto FTP is to listen on servers for files that move around often. If you have a remote datastore and need to receive files often, you'll need to manually connect via FTP and download them. Auto FTP will listen on a connection for new files -- files you're interested in -- and will automatically add them to a download queue and process them.
+Auto FTP will listen on a connection for new files -- files you're interested in -- and will automatically add them to a download queue and process them. This means you can run this application, set up host information -- including file filters -- then leave it running in the background. It works by:
+
+- Connecting to the host at a [user specified] interval (default every 5 minutes).
+- Navigats to a user specified remote directory.
+- Scans all files that have been modified since last scan.
+- Runs files through the filter list, picking out relevant files.
+- Adds selected files to a download queue
+- Downloads files, one at a time to a user specified local directory
+- Closes connection once all files have been downloaded and updates the last scan date-time.
 
 Project Status
 --------------
