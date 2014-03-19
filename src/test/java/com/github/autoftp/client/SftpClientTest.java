@@ -22,7 +22,7 @@ import org.mockito.Mockito;
 import com.github.autoftp.connection.Connection;
 import com.github.autoftp.connection.ConnectionFactory;
 import com.github.autoftp.connection.SftpConnection;
-import com.github.autoftp.exception.NotConnectedException;
+import com.github.autoftp.exception.ClientDisconnectionException;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
@@ -124,7 +124,7 @@ public class SftpClientTest {
 	@Test
 	public void disconnectMethodShouldThrowExceptionWhenNotInitiallyConnected() {
 		
-		expectedException.expect(NotConnectedException.class);
+		expectedException.expect(ClientDisconnectionException.class);
 		expectedException.expectMessage(is(equalTo("The underlying connection was never initially made.")));
 		
 		sftpClient.disconnect();

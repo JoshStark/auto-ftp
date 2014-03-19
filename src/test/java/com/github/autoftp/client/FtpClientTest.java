@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -26,6 +27,7 @@ import org.mockito.Mockito;
 import com.github.autoftp.connection.Connection;
 import com.github.autoftp.connection.ConnectionFactory;
 import com.github.autoftp.connection.FtpConnection;
+import com.github.autoftp.exception.ClientDisconnectionException;
 import com.github.autoftp.exception.ConnectionInitialisationException;
 
 public class FtpClientTest {
@@ -48,7 +50,7 @@ public class FtpClientTest {
 	private String password;
 
 	@Before
-	public void setUp() {
+	public void setUp() throws IOException {
 		initMocks(this);
 
 		hostname = "this is a hostname";
@@ -60,6 +62,10 @@ public class FtpClientTest {
 		ftpClient.setPort(port);
 		ftpClient.setCredentials(username, password);
 
+		when(mockFtpClient.getReplyCode()).thenReturn(200);
+		when(mockFtpClient.login(username, password)).thenReturn(true);
+		when(mockFtpClient.isConnected()).thenReturn(true);
+		
 		when(mockConnectionFactory.createFtpConnection(mockFtpClient)).thenReturn(new FtpConnection(mockFtpClient));
 	}
 
@@ -121,5 +127,64 @@ public class FtpClientTest {
 		doThrow(new UnknownHostException()).when(mockFtpClient).connect(hostname, port);
 
 		ftpClient.connect();
+	}
+	
+	@Test
+	public void ifUnderlyingClientReturnsBadConnectionCodeThenThrowConnectionException() {
+		
+		expectedException.expect(ConnectionInitialisationException.class);
+		expectedException.expectMessage(is(equalTo("The host " + hostname + " on port " + port + " returned a bad status code.")));
+		
+		when(mockFtpClient.getReplyCode()).thenReturn(500);
+		
+		ftpClient.connect();
+	}
+	
+	@Test
+	public void ifUnableToLoginToFtpClientThenThrowConnectionInitialisationException() throws IOException {
+		
+		expectedException.expect(ConnectionInitialisationException.class);
+		expectedException.expectMessage(is(equalTo("Unable to login for user " + username)));
+		
+		when(mockFtpClient.login(username, password)).thenReturn(false);
+		
+		ftpClient.connect();
+	}
+	
+	@Test
+	public void whenDisconnectingThenClientShouldCheckToSeeIfAlreadyDisconnected() {
+		
+		ftpClient.disconnect();
+		
+		verify(mockFtpClient).isConnected();
+	}
+	
+	@Test
+	public void whenAlreadyDisconnectedThenClientShoudlNotCallOnUnderlyingClientDisconnectMethod() throws IOException {
+		
+		when(mockFtpClient.isConnected()).thenReturn(false);
+		
+		ftpClient.disconnect();
+		
+		verify(mockFtpClient, times(0)).disconnect();
+	}
+	
+	@Test
+	public void whenClientIsStillConnectedThenShouldCallOnUnderlyingClientDisconnectMethod() throws IOException {
+		
+		ftpClient.disconnect();
+		
+		verify(mockFtpClient).disconnect();
+	}
+	
+	@Test
+	public void ifUnderlyingClientThrowsExceptionWhenDisconnectingThenClientShouldCatchAndRethrow() throws IOException {
+		
+		expectedException.expect(ClientDisconnectionException.class);
+		expectedException.expectMessage(is(equalTo("There was an unexpected error while trying to disconnect.")));
+		
+		doThrow(new IOException()).when(mockFtpClient).disconnect();
+		
+		ftpClient.disconnect();		
 	}
 }
