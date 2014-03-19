@@ -27,6 +27,7 @@ public class SettingsProvider {
 	
 	public void setDownloadDirectory(String directory) {
 		
+		this.xmlConfiguration.clearProperty(APP_DOWNLOAD_DIR);
 		this.xmlConfiguration.addProperty(APP_DOWNLOAD_DIR, directory);
 		
 		saveConfig();
@@ -38,6 +39,7 @@ public class SettingsProvider {
 	
 	public void setFilterExpressions(List<String> filters) {
 		
+		this.xmlConfiguration.clearProperty(FILE_FILTER_LIST);
 		this.xmlConfiguration.addProperty(FILE_FILTER_LIST, filters);
 		
 		saveConfig();

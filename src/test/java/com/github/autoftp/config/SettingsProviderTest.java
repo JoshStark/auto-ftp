@@ -2,8 +2,8 @@ package com.github.autoftp.config;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItems;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -51,6 +51,7 @@ public class SettingsProviderTest {
 
 		settingsProvider.setDownloadDirectory(THIS_IS_A_DOWNLOAD_DIR);
 
+		verify(xmlConfiguration).clearProperty(APP_DOWNLOAD_DIR);
 		verify(xmlConfiguration).addProperty(APP_DOWNLOAD_DIR, THIS_IS_A_DOWNLOAD_DIR);
 		verify(xmlConfiguration).save();
 	}
@@ -113,6 +114,7 @@ public class SettingsProviderTest {
 		
 		settingsProvider.setFilterExpressions(filters);
 		
+		verify(xmlConfiguration).clearProperty(FILE_FILTER_LIST);
 		verify(xmlConfiguration).addProperty(FILE_FILTER_LIST, filters);
 	}
 	
