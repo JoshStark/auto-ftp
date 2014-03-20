@@ -32,34 +32,3 @@ Quick FTP Example
     client.disconnect();
 
 Note: The protocol behind the client is defined via the factory. If you want an FTP connection, then use ClientType.FTP. If you want it to be SFTP, then use ClientType.SFTP. The protocol type doesn't affect any of the above code syntax; just how it behaves.
-
-
-Project Status
---------------
-
-**General**
-
-|Feature|Status|
-|-------|------|
-|FTP Support|Done|
-|SFTP Support|Done|
-|FTPS Support|Not yet implemented|
-|Proxy Support|Not yet implemented|
-
-**User Configuration**
-
-|Feature|Status|
-|-------|------|
-|Download Directory|User can configure|
-|Host Settings|Not yet implemented|
-|File filtering|Not yet implemented|
-
-
-**User Interface**
-
-|Feature|Status|
-|-------|------|
-|Main screen|Not yet implemented|
-|Terminal panel|Not yet implemented|
-|Settings window|Not yet implemented|
-
