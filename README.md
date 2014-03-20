@@ -11,6 +11,25 @@ Auto FTP will listen on a connection for new files -- files you're interested in
 - Downloads files, one at a time to a user specified local directory
 - Closes connection once all files have been downloaded and updates the last scan date-time.
 
+Quick FTP Example
+-----------------
+
+    Client client = new ClientFactory().createClient(ClientType.FTP);
+    client.setHost("a.host.name");
+    client.setPort(21);
+    client.setCredentials("username", "password");
+
+    Connection connection = client.connect();
+    connection.setRemoteDirectory("files/todownload");
+  
+    List<FtpFile> remoteFiles = connection.listFiles();
+  
+    for (FtpFile file : remoteFiles)
+        System.out.println(file.getName());
+    
+    client.disconnect();
+
+
 Project Status
 --------------
 
