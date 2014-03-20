@@ -20,24 +20,28 @@ Project Setup
 This is a Gradle based project and includes everything you'll need to get its dependencies. The Gradle Wrapper that has been included means you don't need to have Gradle pre-installed before you get the project. It will download any Gradle-specific libraries itself. Just do the following and Gradle should build the project for you:
 
 UNIX/OS X:
+```bash
+./gradlew build
+```
 
-    ./gradlew build
-    
 Windows:
+```bash
+gradlew build
+```
 
-    gradlew build
-    
 This project is fully tested and all tests can be run via Gradle:
+```bash
+gradlew test
+```
 
-    gradlew test
-    
 If you use Eclipse, it may be worth also running the Eclipse-specific tasks as well to help set up your .project:
-
-    gradlew eclipse
+```bash
+gradlew eclipse
+```
 
 Quick FTP Example
 -----------------
-
+```java
     Client client = new ClientFactory().createClient(ClientType.FTP);
     client.setHost("a.host.name");
     client.setPort(21);
@@ -52,5 +56,6 @@ Quick FTP Example
         System.out.println(file.getName());
     
     client.disconnect();
+```
 
 Note: The protocol behind the client is defined via the factory. If you want an FTP connection, then use ClientType.FTP. If you want it to be SFTP, then use ClientType.SFTP. The protocol type doesn't affect any of the above code syntax; just how it behaves.
