@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/JAGFin1/auto-ftp.png?branch=master)](https://travis-ci.org/JAGFin1/auto-ftp)
+
 Auto FTP
 ========
 
@@ -61,7 +63,3 @@ Project Status
 |Terminal panel|Not yet implemented|
 |Settings window|Not yet implemented|
 
-Build Status
-------------
-
-[![Build Status](https://travis-ci.org/JAGFin1/auto-ftp.png?branch=master)](https://travis-ci.org/JAGFin1/auto-ftp)
