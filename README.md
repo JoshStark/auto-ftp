@@ -31,7 +31,7 @@ This project is fully tested and all test can be run via Gradle:
 
     gradlew test
     
-I [Josh Greatrex] chose to develop Auto FTP in Eclipse, so it may be worth also running the Eclipse-specific tasks as well to help set up your .project:
+If you use Eclipse, it may be worth also running the Eclipse-specific tasks as well to help set up your .project:
 
     gradlew eclipse
 
