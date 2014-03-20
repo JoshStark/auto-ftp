@@ -18,7 +18,7 @@ Project Status
 
 |Feature|Status|
 |-------|------|
-|FTP Support|In progress|
+|FTP Support|Done|
 |SFTP Support|Done|
 |FTPS Support|Not yet implemented|
 |Proxy Support|Not yet implemented|
