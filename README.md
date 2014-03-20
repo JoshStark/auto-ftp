@@ -13,6 +13,28 @@ Auto FTP will listen on a connection for new files -- files you're interested in
 - Downloads files, one at a time to a user specified local directory
 - Closes connection once all files have been downloaded and updates the last scan date-time.
 
+
+Project Setup
+-------------
+
+This is a Gradle based project and includes everything you'll need to get its dependencies. The Gradle Wrapper that has been included means you don't need to have Gradle pre-installed before you get the project. It will download any Gradle-specific libraries itself. Just do the following and Gradle should build the project for you:
+
+UNIX/OS X:
+
+    ./gradlew build
+    
+Windows:
+
+    gradlew build
+    
+This project is fully tested and all test can be run via Gradle:
+
+    gradlew test
+    
+I [Josh Greatrex] chose to develop Auto FTP in Eclipse, so it may be worth also running the Eclipse-specific tasks as well to help set up your .project:
+
+    gradlew eclipse
+
 Quick FTP Example
 -----------------
 
