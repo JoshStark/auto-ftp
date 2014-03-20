@@ -42,20 +42,20 @@ gradlew eclipse
 Quick FTP Example
 -----------------
 ```java
-    Client client = new ClientFactory().createClient(ClientType.FTP);
-    client.setHost("a.host.name");
-    client.setPort(21);
-    client.setCredentials("username", "password");
+Client client = new ClientFactory().createClient(ClientType.FTP);
+client.setHost("a.host.name");
+client.setPort(21);
+client.setCredentials("username", "password");
 
-    Connection connection = client.connect();
-    connection.setRemoteDirectory("files/todownload");
+Connection connection = client.connect();
+connection.setRemoteDirectory("files/todownload");
   
-    List<FtpFile> remoteFiles = connection.listFiles();
+List<FtpFile> remoteFiles = connection.listFiles();
   
-    for (FtpFile file : remoteFiles)
-        System.out.println(file.getName());
+for (FtpFile file : remoteFiles)
+    System.out.println(file.getName());
     
-    client.disconnect();
+client.disconnect();
 ```
 
 Note: The protocol behind the client is defined via the factory. If you want an FTP connection, then use ClientType.FTP. If you want it to be SFTP, then use ClientType.SFTP. The protocol type doesn't affect any of the above code syntax; just how it behaves.
