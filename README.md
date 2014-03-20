@@ -27,7 +27,7 @@ Windows:
 
     gradlew build
     
-This project is fully tested and all test can be run via Gradle:
+This project is fully tested and all tests can be run via Gradle:
 
     gradlew test
     
