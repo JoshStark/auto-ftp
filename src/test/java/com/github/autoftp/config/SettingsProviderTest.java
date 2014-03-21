@@ -204,7 +204,7 @@ public class SettingsProviderTest {
 		
 		settingsProvider.setHost(config);
 		
-		verify(xmlConfiguration).clearProperty(HOST);
+		verify(xmlConfiguration).clearTree(HOST);
 		verify(xmlConfiguration).addProperty(HOST_NAME, "hostname");
 		verify(xmlConfiguration).addProperty(HOST_PASSWORD, "password");
 		verify(xmlConfiguration).addProperty(HOST_PORT, 80);

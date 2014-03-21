@@ -3,6 +3,7 @@ package com.github.autoftp;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -204,7 +205,21 @@ public class ConnectionSchedulerTest {
 		List<FtpFile> filesToFilter = createFiles();
 		List<FtpFile> filteredFiles = connectionScheduler.filterFilesToCreateDownloadQueue(filesToFilter);
 
-		verify(mockListener).onFilterListObtained(filteredFiles);
+		InOrder inOrder = Mockito.inOrder(mockListener, mockSettingsProvider);
+		
+		inOrder.verify(mockListener).onFilterListObtained(filteredFiles);
+		inOrder.verify(mockSettingsProvider).setLastRunDate(any(DateTime.class)); // I really hate having to use any().
+	}
+	
+	@Test
+	public void ifThereAreNoFilesToDownloadThenListenersShouldNotBeNotified() {
+		
+		List<FtpFile> filesToFilter = new ArrayList<FtpFile>();
+		filesToFilter.add(new FtpFile("File 1", 8000l, "/full/path/to/File 1", new DateTime(2014, 1, 5, 07, 0, 0).getMillis()));
+		
+		List<FtpFile> filteredFiles = connectionScheduler.filterFilesToCreateDownloadQueue(filesToFilter);
+		
+		verify(mockListener, times(0)).onFilterListObtained(filteredFiles);
 	}
 
 	@Test

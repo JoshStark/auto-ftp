@@ -128,7 +128,10 @@ public class ConnectionScheduler extends ConnectionNotifier implements Runnable 
 			}
 		}
 
-		notifyOfFilesToDownload(filteredFiles);
+		if (!filteredFiles.isEmpty())
+			notifyOfFilesToDownload(filteredFiles);
+		
+		settingsProvider.setLastRunDate(DateTime.now());
 
 		return filteredFiles;
 	}

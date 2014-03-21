@@ -84,7 +84,7 @@ public class SettingsProvider {
 	
 	public void setHost(HostConfig hostConfig) {
 		
-		xmlConfiguration.clearProperty(HOST);
+		xmlConfiguration.clearTree(HOST);
 		
 		xmlConfiguration.addProperty(HOST_NAME, hostConfig.getHostname());
 		xmlConfiguration.addProperty(HOST_PASSWORD, hostConfig.getPassword());
