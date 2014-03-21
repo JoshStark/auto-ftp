@@ -73,7 +73,7 @@ public class SettingsProvider {
 		saveConfig();
 	}
 
-	public DateTime getLastRun() {
+	public DateTime getLastRunDate() {
 		
 		long timeAsOfNowInMilliseconds = DateTime.now().getMillis();
 		long lastRunInMilliseconds = xmlConfiguration.getLong(LAST_RUN, timeAsOfNowInMilliseconds);

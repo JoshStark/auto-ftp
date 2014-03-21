@@ -1,5 +1,6 @@
 package com.github.autoftp;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -12,6 +13,8 @@ import com.github.autoftp.config.SettingsProvider;
 import com.github.autoftp.connection.Connection;
 import com.github.autoftp.connection.FtpFile;
 import com.github.autoftp.exception.ConnectionInitialisationException;
+import com.github.autoftp.exception.DownloadFailedException;
+import com.github.autoftp.exception.FileListingException;
 
 public class ConnectionScheduler extends ConnectionNotifier implements Runnable {
 
@@ -19,17 +22,20 @@ public class ConnectionScheduler extends ConnectionNotifier implements Runnable 
 	private Connection connection;
 	private ClientFactory clientFactory;
 	private SettingsProvider settingsProvider;
+	private PatternBuilder patternBuilder;
 
 	public ConnectionScheduler() {
 
 		clientFactory = new ClientFactory();
 		settingsProvider = new SettingsProvider();
+		patternBuilder = new PatternBuilder();
 	}
 
 	@Override
 	public void run() {
 
 		openConnectionToHost();
+		moveToRemoteDownloadFolder();
 
 		List<FtpFile> files = retrieveFilesAfterLastScan();
 		List<FtpFile> filtered = filterFilesToCreateDownloadQueue(files);
@@ -66,28 +72,70 @@ public class ConnectionScheduler extends ConnectionNotifier implements Runnable 
 
 	protected List<FtpFile> retrieveFilesAfterLastScan() {
 
-		DateTime lastRun = settingsProvider.getLastRun();
+		List<FtpFile> files = null;
 
-		List<FtpFile> files = connection.listFiles();
+		try {
 
-		Iterator<FtpFile> fileIterator = files.iterator();
+			DateTime lastRun = settingsProvider.getLastRunDate();
 
-		while (fileIterator.hasNext()) {
-			
-			FtpFile currentFile = fileIterator.next();
-			
-			if(currentFile.getLastModified().isBefore(lastRun))
-				fileIterator.remove();
+			files = connection.listFiles();
+
+			Iterator<FtpFile> fileIterator = files.iterator();
+
+			while (fileIterator.hasNext()) {
+
+				FtpFile currentFile = fileIterator.next();
+
+				if (currentFile.getLastModified().isBefore(lastRun))
+					fileIterator.remove();
+			}
+
+		} catch (FileListingException e) {
+			notifyOfError(e.getMessage());
 		}
 
 		return files;
 	}
 
 	protected List<FtpFile> filterFilesToCreateDownloadQueue(List<FtpFile> filesToFilter) {
-		return null;
+
+		List<FtpFile> filteredFiles = new ArrayList<FtpFile>();
+		List<String> filterExpressions = settingsProvider.getFilterExpressions();
+
+		for (FtpFile file : filesToFilter) {
+
+			for (String expression : filterExpressions) {
+
+				String expressionRegex = patternBuilder.buildFromFilterString(expression);
+
+				if (file.getName().matches(expressionRegex))
+					filteredFiles.add(file);
+			}
+		}
+
+		notifyOfFilesToDownload(filteredFiles);
+
+		return filteredFiles;
 	}
 
 	protected void downloadFile(FtpFile fileToDownload) {
+
+		String downloadDirectory = settingsProvider.getDownloadDirectory();
+
+		notifyOnDownloadStart(fileToDownload.getName());
+
+		try {
+
+			connection.download(fileToDownload, downloadDirectory);
+
+			notifyOnDownloadFinished();
+
+		} catch (DownloadFailedException e) {
+			notifyOfError(e.getMessage());
+		}
+	}
+
+	protected void moveToRemoteDownloadFolder() {
 
 	}
 }

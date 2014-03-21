@@ -159,7 +159,7 @@ public class SettingsProviderTest {
 		
 		when(xmlConfiguration.getLong(eq(LAST_RUN), anyLong())).thenReturn(123456789l);
 		
-		assertThat(settingsProvider.getLastRun(), is(equalTo(dateTime)));
+		assertThat(settingsProvider.getLastRunDate(), is(equalTo(dateTime)));
 	}
 	
 	@Test
