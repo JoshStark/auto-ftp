@@ -24,10 +24,17 @@ import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
+import com.github.autoftp.client.ClientFactory.ClientType;
 import com.github.autoftp.exception.ConfigCorruptedException;
 
 public class SettingsProviderTest {
 
+	private static final String HOST = "host";
+	private static final String HOST_PORT = "host.port";
+	private static final String HOST_TYPE = "host.type";
+	private static final String HOST_PASSWORD = "host.password";
+	private static final String HOST_USER = "host.user";
+	private static final String HOST_NAME = "host.name";
 	private static final String LAST_RUN = "last-run";
 	private static final String APP_DOWNLOAD_DIR = "download-dir";
 	private static final String FILE_FILTER_LIST = "filters.expression";
@@ -166,6 +173,53 @@ public class SettingsProviderTest {
 		assertThat(settingsProvider.getLastRun(), is(equalTo(now)));
 	}
 	
+	@Test
+	public void getHostConfigShouldCompileMultipleObjectValuesFromConfigIntoHostConfigObject() {
+		
+		when(xmlConfiguration.getString(HOST_NAME)).thenReturn("hostname");
+		when(xmlConfiguration.getString(HOST_USER)).thenReturn("a user");
+		when(xmlConfiguration.getString(HOST_PASSWORD)).thenReturn("a password");
+		when(xmlConfiguration.getInt(HOST_PORT)).thenReturn(80);
+		when(xmlConfiguration.getString(HOST_TYPE)).thenReturn("SFTP");
+		
+		HostConfig hostConfig = settingsProvider.getHost();
+		
+		verify(xmlConfiguration).getString(HOST_NAME);
+		verify(xmlConfiguration).getString(HOST_USER);
+		verify(xmlConfiguration).getString(HOST_PASSWORD);
+		verify(xmlConfiguration).getString(HOST_TYPE);
+		verify(xmlConfiguration).getInt(HOST_PORT);
+		
+		assertThat(hostConfig.getHostname(), is(equalTo("hostname")));
+		assertThat(hostConfig.getPassword(), is(equalTo("a password")));
+		assertThat(hostConfig.getUsername(), is(equalTo("a user")));
+		assertThat(hostConfig.getPort(), is(equalTo(80)));
+		assertThat(hostConfig.getClientType(), is(equalTo(ClientType.SFTP)));
+	}
+	
+	@Test
+	public void setHostConfigShouldTakeHostConfigObjectAndWriteToXmlForEveryField() throws ConfigurationException {
+		
+		HostConfig config = new HostConfig();
+		
+		config.setClientType(ClientType.SFTP);
+		config.setHostname("hostname");
+		config.setPassword("password");
+		config.setPort(80);
+		config.setUsername("username");
+		
+		settingsProvider.setHost(config);
+		
+		verify(xmlConfiguration).clearProperty(HOST);
+		verify(xmlConfiguration).addProperty(HOST_NAME, "hostname");
+		verify(xmlConfiguration).addProperty(HOST_PASSWORD, "password");
+		verify(xmlConfiguration).addProperty(HOST_PORT, 80);
+		verify(xmlConfiguration).addProperty(HOST_TYPE, "SFTP");
+		verify(xmlConfiguration).addProperty(HOST_USER, "username");
+		
+		verify(xmlConfiguration).save();
+	}
+
 	private List<Object> initFilterList() {
 
 		List<Object> list = new ArrayList<Object>();
