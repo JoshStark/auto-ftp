@@ -163,17 +163,6 @@ public class SettingsProviderTest {
 	}
 	
 	@Test
-	public void ifLastRunHasNotBeenPreviousSetThenItShouldReturnTimeNow() {
-		
-		DateTime now = DateTime.now();
-		long timeNow = now.getMillis();
-
-		when(xmlConfiguration.getLong(LAST_RUN, timeNow)).thenReturn(timeNow);
-		
-		assertThat(settingsProvider.getLastRun(), is(equalTo(now)));
-	}
-	
-	@Test
 	public void getHostConfigShouldCompileMultipleObjectValuesFromConfigIntoHostConfigObject() {
 		
 		when(xmlConfiguration.getString(HOST_NAME)).thenReturn("hostname");

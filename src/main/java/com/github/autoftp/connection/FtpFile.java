@@ -9,7 +9,7 @@ public class FtpFile {
 	private String fullPath;
 	private DateTime lastModified;
 
-	protected FtpFile(String name, long size, String fullPath, long mTime) {
+	public FtpFile(String name, long size, String fullPath, long mTime) {
 
 		this.name = name;
 		this.size = size;
