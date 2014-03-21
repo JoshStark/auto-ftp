@@ -5,11 +5,13 @@ import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
+import org.joda.time.DateTime;
 
 import com.github.autoftp.exception.ConfigCorruptedException;
 
 public class SettingsProvider {
 
+	private static final String LAST_RUN = "last-run";
 	private static final String APP_DOWNLOAD_DIR = "download-dir";
 	private static final String FILE_FILTER_LIST = "filters.expression";
 
@@ -55,7 +57,23 @@ public class SettingsProvider {
 
 		return filters;
 	}
+	
+	public void setLastRunDate(DateTime date) {
+		
+		this.xmlConfiguration.clearProperty(LAST_RUN);
+		this.xmlConfiguration.addProperty(LAST_RUN, date.getMillis());
+		
+		saveConfig();
+	}
 
+	public DateTime getLastRun() {
+		
+		long timeAsOfNowInMilliseconds = DateTime.now().getMillis();
+		long lastRunInMilliseconds = this.xmlConfiguration.getLong(LAST_RUN, timeAsOfNowInMilliseconds);
+		
+		return new DateTime(lastRunInMilliseconds);
+	}
+	
 	private void saveConfig() {
 		try {
 

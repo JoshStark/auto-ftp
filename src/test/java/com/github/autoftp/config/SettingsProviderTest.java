@@ -4,6 +4,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -14,6 +16,7 @@ import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,6 +28,7 @@ import com.github.autoftp.exception.ConfigCorruptedException;
 
 public class SettingsProviderTest {
 
+	private static final String LAST_RUN = "last-run";
 	private static final String APP_DOWNLOAD_DIR = "download-dir";
 	private static final String FILE_FILTER_LIST = "filters.expression";
 
@@ -127,6 +131,39 @@ public class SettingsProviderTest {
 		settingsProvider.setFilterExpressions(filters);
 		
 		verify(xmlConfiguration).save();
+	}
+	
+	@Test
+	public void setLastRunDateShouldAddNewPropertyToXmlConfiguration() throws ConfigurationException {
+		
+		DateTime dateTime = new DateTime(123456789);
+		
+		settingsProvider.setLastRunDate(dateTime);
+		
+		verify(xmlConfiguration).clearProperty(LAST_RUN);
+		verify(xmlConfiguration).addProperty(LAST_RUN, 123456789l);
+		verify(xmlConfiguration).save();
+	}
+	
+	@Test
+	public void getLastRunDateShouldGetLastRunMillisAndConvertToDateTimeThenReturn() {
+		
+		DateTime dateTime = new DateTime(123456789);
+		
+		when(xmlConfiguration.getLong(eq(LAST_RUN), anyLong())).thenReturn(123456789l);
+		
+		assertThat(settingsProvider.getLastRun(), is(equalTo(dateTime)));
+	}
+	
+	@Test
+	public void ifLastRunHasNotBeenPreviousSetThenItShouldReturnTimeNow() {
+		
+		DateTime now = DateTime.now();
+		long timeNow = now.getMillis();
+
+		when(xmlConfiguration.getLong(LAST_RUN, timeNow)).thenReturn(timeNow);
+		
+		assertThat(settingsProvider.getLastRun(), is(equalTo(now)));
 	}
 	
 	private List<Object> initFilterList() {
