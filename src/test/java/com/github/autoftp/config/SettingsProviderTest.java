@@ -29,6 +29,7 @@ import com.github.autoftp.exception.ConfigCorruptedException;
 
 public class SettingsProviderTest {
 
+	private static final String HOST_FILE_DIR = "host.file-dir";
 	private static final String HOST = "host";
 	private static final String HOST_PORT = "host.port";
 	private static final String HOST_TYPE = "host.type";
@@ -170,6 +171,7 @@ public class SettingsProviderTest {
 		when(xmlConfiguration.getString(HOST_PASSWORD)).thenReturn("a password");
 		when(xmlConfiguration.getInt(HOST_PORT)).thenReturn(80);
 		when(xmlConfiguration.getString(HOST_TYPE)).thenReturn("SFTP");
+		when(xmlConfiguration.getString(HOST_FILE_DIR)).thenReturn("remote/directory");
 		
 		HostConfig hostConfig = settingsProvider.getHost();
 		
@@ -178,12 +180,14 @@ public class SettingsProviderTest {
 		verify(xmlConfiguration).getString(HOST_PASSWORD);
 		verify(xmlConfiguration).getString(HOST_TYPE);
 		verify(xmlConfiguration).getInt(HOST_PORT);
+		verify(xmlConfiguration).getString(HOST_FILE_DIR);
 		
 		assertThat(hostConfig.getHostname(), is(equalTo("hostname")));
 		assertThat(hostConfig.getPassword(), is(equalTo("a password")));
 		assertThat(hostConfig.getUsername(), is(equalTo("a user")));
 		assertThat(hostConfig.getPort(), is(equalTo(80)));
 		assertThat(hostConfig.getClientType(), is(equalTo(ClientType.SFTP)));
+		assertThat(hostConfig.getFileDirectory(), is(equalTo("remote/directory")));
 	}
 	
 	@Test
@@ -196,6 +200,7 @@ public class SettingsProviderTest {
 		config.setPassword("password");
 		config.setPort(80);
 		config.setUsername("username");
+		config.setFileDirectory("remote/directory");
 		
 		settingsProvider.setHost(config);
 		
@@ -205,6 +210,7 @@ public class SettingsProviderTest {
 		verify(xmlConfiguration).addProperty(HOST_PORT, 80);
 		verify(xmlConfiguration).addProperty(HOST_TYPE, "SFTP");
 		verify(xmlConfiguration).addProperty(HOST_USER, "username");
+		verify(xmlConfiguration).addProperty(HOST_FILE_DIR, "remote/directory");
 		
 		verify(xmlConfiguration).save();
 	}

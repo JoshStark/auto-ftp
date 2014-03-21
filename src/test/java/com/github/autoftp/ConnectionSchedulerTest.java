@@ -29,9 +29,11 @@ import com.github.autoftp.config.HostConfig;
 import com.github.autoftp.config.SettingsProvider;
 import com.github.autoftp.connection.Connection;
 import com.github.autoftp.connection.FtpFile;
+import com.github.autoftp.exception.ClientDisconnectionException;
 import com.github.autoftp.exception.ConnectionInitialisationException;
 import com.github.autoftp.exception.DownloadFailedException;
 import com.github.autoftp.exception.FileListingException;
+import com.github.autoftp.exception.NoSuchDirectoryException;
 
 public class ConnectionSchedulerTest {
 
@@ -81,7 +83,7 @@ public class ConnectionSchedulerTest {
 
 		connectionScheduler.registerListener(mockListener);
 	}
-
+	
 	@Test
 	public void openingAConnectionShouldGetHostConfigFromSettings() {
 
@@ -136,6 +138,25 @@ public class ConnectionSchedulerTest {
 	}
 
 	@Test
+	public void onceConnectedTheConnectionShouldSetTheWorkingDirectory() {
+
+		connectionScheduler.openConnectionToHost();
+
+		verify(mockConnection).setRemoteDirectory(hostConfig.getFileDirectory());
+	}
+
+	@Test
+	public void ifServerCantChangeDirectoryThenListenersShouldBeNotified() {
+
+		doThrow(new NoSuchDirectoryException("Could not change directory")).when(mockConnection).setRemoteDirectory(
+		        hostConfig.getFileDirectory());
+
+		connectionScheduler.openConnectionToHost();
+
+		verify(mockListener).onError("Could not change directory");
+	}
+
+	@Test
 	public void whenRetrievingFilesFromServerThenLastRunDateShouldBeObtainedFromSettings() {
 
 		connectionScheduler.retrieveFilesAfterLastScan();
@@ -176,13 +197,13 @@ public class ConnectionSchedulerTest {
 		assertThat(filteredFiles.get(0).getName(), is(equalTo("File 3 with some text")));
 		assertThat(filteredFiles.get(1).getName(), is(equalTo("Unusual File 4")));
 	}
-	
+
 	@Test
 	public void whenFilesHaveBeenFilteredTheSchedulerShouldNotifyListenersWithListOfFilesItWillBeDownloading() {
-		
+
 		List<FtpFile> filesToFilter = createFiles();
 		List<FtpFile> filteredFiles = connectionScheduler.filterFilesToCreateDownloadQueue(filesToFilter);
-		
+
 		verify(mockListener).onFilterListObtained(filteredFiles);
 	}
 
@@ -216,41 +237,62 @@ public class ConnectionSchedulerTest {
 		        new DateTime(2014, 1, 5, 07, 0, 0).getMillis());
 
 		connectionScheduler.downloadFile(fileToDownload);
-		
+
 		verify(mockConnection).download(fileToDownload, "local/directory");
 	}
-	
+
 	@Test
 	public void beforeDownloadingAFileTheSchedulerShouldNotifyListenersItIsAboutToStartDownloadingThenNotifyWhenFinished() {
-		
+
 		when(mockSettingsProvider.getDownloadDirectory()).thenReturn("local/directory");
 
 		FtpFile fileToDownload = new FtpFile("File 1", 8000l, "/full/path/to/File 1",
 		        new DateTime(2014, 1, 5, 07, 0, 0).getMillis());
 
 		InOrder inOrder = Mockito.inOrder(mockListener, mockConnection);
-		
+
 		connectionScheduler.downloadFile(fileToDownload);
-		
+
 		inOrder.verify(mockListener).onDownloadStarted("File 1");
 		inOrder.verify(mockConnection).download(fileToDownload, "local/directory");
 		inOrder.verify(mockListener).onDownloadFinished();
 	}
-	
+
 	@Test
 	public void ifCurrentDownloadFailsThenListenersShouldBeNotified() {
-		
+
 		when(mockSettingsProvider.getDownloadDirectory()).thenReturn("local/directory");
-		
+
 		FtpFile fileToDownload = new FtpFile("File 1", 8000l, "/full/path/to/File 1",
-				new DateTime(2014, 1, 5, 07, 0, 0).getMillis());
-		
-		doThrow(new DownloadFailedException("Unable to download file")).when(mockConnection).download(fileToDownload, "local/directory");
-		
+		        new DateTime(2014, 1, 5, 07, 0, 0).getMillis());
+
+		doThrow(new DownloadFailedException("Unable to download file")).when(mockConnection).download(fileToDownload,
+		        "local/directory");
+
 		connectionScheduler.downloadFile(fileToDownload);
 
 		verify(mockListener).onError("Unable to download file");
 		verify(mockListener, times(0)).onDownloadFinished();
+	}
+
+	@Test
+	public void toCloseTheConnectionTheUnderlyingClientShouldHaveDisconnectMethodCalledAndShouldNotifyListeners() {
+
+		connectionScheduler.closeConnectionToHost();
+
+		verify(mockClient).disconnect();
+		verify(mockListener).onDisconnection();
+	}
+
+	@Test
+	public void ifConnectionIsUnableToCloseThenSchedulerShouldInformListeners() {
+
+		doThrow(new ClientDisconnectionException("Unable to disconnect")).when(mockClient).disconnect();
+
+		connectionScheduler.closeConnectionToHost();
+
+		verify(mockListener).onError("Unable to disconnect");
+		verify(mockListener, times(0)).onDisconnection();
 	}
 
 	private List<FtpFile> createFiles() {

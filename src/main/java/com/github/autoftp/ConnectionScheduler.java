@@ -12,9 +12,11 @@ import com.github.autoftp.config.HostConfig;
 import com.github.autoftp.config.SettingsProvider;
 import com.github.autoftp.connection.Connection;
 import com.github.autoftp.connection.FtpFile;
+import com.github.autoftp.exception.ClientDisconnectionException;
 import com.github.autoftp.exception.ConnectionInitialisationException;
 import com.github.autoftp.exception.DownloadFailedException;
 import com.github.autoftp.exception.FileListingException;
+import com.github.autoftp.exception.NoSuchDirectoryException;
 
 public class ConnectionScheduler extends ConnectionNotifier implements Runnable {
 
@@ -35,7 +37,6 @@ public class ConnectionScheduler extends ConnectionNotifier implements Runnable 
 	public void run() {
 
 		openConnectionToHost();
-		moveToRemoteDownloadFolder();
 
 		List<FtpFile> files = retrieveFilesAfterLastScan();
 		List<FtpFile> filtered = filterFilesToCreateDownloadQueue(files);
@@ -59,15 +60,29 @@ public class ConnectionScheduler extends ConnectionNotifier implements Runnable 
 		try {
 
 			connection = client.connect();
+
 			notifyOfConnectionOpening();
 
+			moveToRemoteDownloadFolder(host.getFileDirectory());
+
 		} catch (ConnectionInitialisationException e) {
+			notifyOfError(e.getMessage());
+		} catch (NoSuchDirectoryException e) {
 			notifyOfError(e.getMessage());
 		}
 	}
 
 	protected void closeConnectionToHost() {
 
+		try {
+
+			client.disconnect();
+
+			notifyOfConnectionClosing();
+
+		} catch (ClientDisconnectionException e) {
+			notifyOfError(e.getMessage());
+		}
 	}
 
 	protected List<FtpFile> retrieveFilesAfterLastScan() {
@@ -135,7 +150,7 @@ public class ConnectionScheduler extends ConnectionNotifier implements Runnable 
 		}
 	}
 
-	protected void moveToRemoteDownloadFolder() {
-
+	private void moveToRemoteDownloadFolder(String remoteDirectory) {
+		connection.setRemoteDirectory(remoteDirectory);
 	}
 }

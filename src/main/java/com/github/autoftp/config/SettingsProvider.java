@@ -12,6 +12,7 @@ import com.github.autoftp.exception.ConfigCorruptedException;
 
 public class SettingsProvider {
 
+	private static final String HOST_FILE_DIR = "host.file-dir";
 	private static final String HOST = "host";
 	private static final String HOST_PORT = "host.port";
 	private static final String HOST_TYPE = "host.type";
@@ -90,6 +91,7 @@ public class SettingsProvider {
 		xmlConfiguration.addProperty(HOST_PORT, hostConfig.getPort());
 		xmlConfiguration.addProperty(HOST_TYPE, hostConfig.getClientType().toString());
 		xmlConfiguration.addProperty(HOST_USER, hostConfig.getUsername());
+		xmlConfiguration.addProperty(HOST_FILE_DIR, hostConfig.getFileDirectory());
 		
 		saveConfig();
 	}
@@ -103,6 +105,7 @@ public class SettingsProvider {
 		hostConfig.setUsername(xmlConfiguration.getString(HOST_USER));
 		hostConfig.setPassword(xmlConfiguration.getString(HOST_PASSWORD));
 		hostConfig.setClientType(ClientType.valueOf(xmlConfiguration.getString(HOST_TYPE)));
+		hostConfig.setFileDirectory(xmlConfiguration.getString(HOST_FILE_DIR));
 		
 		return hostConfig;
 	}

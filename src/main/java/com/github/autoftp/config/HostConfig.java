@@ -9,6 +9,7 @@ public class HostConfig {
 	private String username;
 	private String password;
 	private ClientType clientType;
+	private String fileDirectory;
 
 	public String getHostname() {
 		return hostname;
@@ -48,5 +49,13 @@ public class HostConfig {
 
 	public void setClientType(ClientType clientType) {
 		this.clientType = clientType;
+	}
+
+	public String getFileDirectory() {
+		return fileDirectory;
+	}
+
+	public void setFileDirectory(String fileDirectory) {
+		this.fileDirectory = fileDirectory;
 	}
 }
