@@ -9,6 +9,8 @@ import com.github.autoftp.config.SettingsProvider;
 
 public class ConnectionScheduleExecutor {
 
+	private static final int START_IMMEDIATELY = 0;
+	
 	private ScheduledExecutorService scheduledExecutorService;
 	private SettingsProvider settingsProvider;
 	private ConnectionSchedule connectionSchedule;
@@ -26,6 +28,6 @@ public class ConnectionScheduleExecutor {
 		
 		int connectionInterval = settingsProvider.getConnectionInterval();
 		
-		scheduledExecutorService.scheduleAtFixedRate(connectionSchedule, 0, connectionInterval, TimeUnit.MINUTES);
+		scheduledExecutorService.scheduleAtFixedRate(connectionSchedule, START_IMMEDIATELY, connectionInterval, TimeUnit.MINUTES);
 	}
 }
