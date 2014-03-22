@@ -102,7 +102,7 @@ public class ConnectionSchedule extends ConnectionNotifier implements Runnable {
 
 				FtpFile currentFile = fileIterator.next();
 
-				if (currentFile.getLastModified().isBefore(lastRun))
+				if (currentFile.getLastModified().isBefore(lastRun) || currentFile.isDirectory())
 					fileIterator.remove();
 			}
 

@@ -168,7 +168,7 @@ public class ConnectionScheduleTest {
 	}
 
 	@Test
-	public void afterGettingFilesFromServerThenClientShouldFilterOutFilesModifiedBeforeLastScan() {
+	public void afterGettingFilesFromServerThenClientShouldFilterOutFilesIfDirectoryOrModifiedBeforeLastScan() {
 
 		List<FtpFile> allFiles = createFiles();
 
@@ -210,13 +210,7 @@ public class ConnectionScheduleTest {
 		InOrder inOrder = Mockito.inOrder(mockListener, mockSettingsProvider);
 
 		inOrder.verify(mockListener).onFilterListObtained(filteredFiles);
-		inOrder.verify(mockSettingsProvider).setLastRunDate(any(DateTime.class)); // I
-																				  // really
-																				  // hate
-																				  // having
-																				  // to
-																				  // use
-																				  // any().
+		inOrder.verify(mockSettingsProvider).setLastRunDate(any(DateTime.class));
 	}
 
 	@Test
@@ -327,7 +321,10 @@ public class ConnectionScheduleTest {
 		files.add(new FtpFile("File 2", 54000l, "/full/path/to/File 2", new DateTime(2014, 1, 1, 06, 40, 0).getMillis(), false));
 		files.add(new FtpFile("File 3 with some text", 240l, "/full/path/to/File 3", new DateTime(2014, 1, 1, 07, 0, 1)
 		        .getMillis(), false));
-		files.add(new FtpFile("Unusual File 4", 873l, "/full/path/to/File 4", new DateTime(2013, 12, 15, 07, 0, 0).getMillis(), false));
+		files.add(new FtpFile("Unusual File 4", 873l, "/full/path/to/File 4", new DateTime(2013, 12, 15, 07, 0, 0).getMillis(),
+		        false));
+		files.add(new FtpFile("Directory 1", 0l, "/full/path/dir", new DateTime(2014, 1, 6, 07, 0, 0).getMillis(), true));
+		files.add(new FtpFile("Directory 2", 0l, "/full/dir", new DateTime(2014, 2, 15, 07, 0, 0).getMillis(), true));
 
 		return files;
 	}
