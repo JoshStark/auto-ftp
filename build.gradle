@@ -28,8 +28,3 @@ task wrapper(type: Wrapper) {
     gradleVersion = '1.8'
 }
 
-macAppBundle {
-    icon = "res/Hopstarter-Orb-Download.icns"
-    bundleJRE = false
-}
-
