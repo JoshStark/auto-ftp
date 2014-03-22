@@ -138,14 +138,17 @@ public class FtpConnectionTest {
 		assertThat(returnedFiles.get(0).getName(), is(equalTo("File 1")));
 		assertThat(returnedFiles.get(0).getSize(), is(equalTo(1000l)));
 		assertThat(returnedFiles.get(0).getFullPath(), is(equalTo(DIRECTORY_PATH + "/File 1")));
+		assertThat(returnedFiles.get(0).isDirectory(), is(equalTo(false)));
 
 		assertThat(returnedFiles.get(1).getName(), is(equalTo("File 2")));
 		assertThat(returnedFiles.get(1).getSize(), is(equalTo(2000l)));
 		assertThat(returnedFiles.get(1).getFullPath(), is(equalTo(DIRECTORY_PATH + "/File 2")));
-
+		assertThat(returnedFiles.get(1).isDirectory(), is(equalTo(true)));
+		
 		assertThat(returnedFiles.get(2).getName(), is(equalTo("File 3")));
 		assertThat(returnedFiles.get(2).getSize(), is(equalTo(3000l)));
 		assertThat(returnedFiles.get(2).getFullPath(), is(equalTo(DIRECTORY_PATH + "/File 3")));
+		assertThat(returnedFiles.get(2).isDirectory(), is(equalTo(false)));
 	}
 
 	@Test
@@ -161,7 +164,7 @@ public class FtpConnectionTest {
 	@Test
 	public void downloadMethodShouldCallOnFtpClientRetrieveFilesMethodWithRemoteFilename() throws IOException {
 
-		FtpFile file = new FtpFile(TEST_DOWNLOAD_FILE, 1000, "/full/path/to/FileToDownload.txt", new DateTime().getMillis());
+		FtpFile file = new FtpFile(TEST_DOWNLOAD_FILE, 1000, "/full/path/to/FileToDownload.txt", new DateTime().getMillis(), false);
 
 		ftpConnection.download(file, ".");
 
@@ -175,7 +178,7 @@ public class FtpConnectionTest {
 		expectedException
 		        .expectMessage(is(equalTo("Unable to write to local directory ." + FILE_SEPARATOR + TEST_DOWNLOAD_FILE)));
 
-		FtpFile file = new FtpFile(TEST_DOWNLOAD_FILE, 1000, "/full/path/to/FileToDownload.txt", new DateTime().getMillis());
+		FtpFile file = new FtpFile(TEST_DOWNLOAD_FILE, 1000, "/full/path/to/FileToDownload.txt", new DateTime().getMillis(), false);
 
 		when(mockFtpClient.retrieveFile(eq(file.getFullPath()), any(OutputStream.class))).thenThrow(new FileNotFoundException());
 
@@ -189,7 +192,7 @@ public class FtpConnectionTest {
 		expectedException.expect(DownloadFailedException.class);
 		expectedException.expectMessage(is(equalTo("Unable to download file " + TEST_DOWNLOAD_FILE)));
 
-		FtpFile file = new FtpFile(TEST_DOWNLOAD_FILE, 1000, "/full/path/to/FileToDownload.txt", new DateTime().getMillis());
+		FtpFile file = new FtpFile(TEST_DOWNLOAD_FILE, 1000, "/full/path/to/FileToDownload.txt", new DateTime().getMillis(), false);
 
 		when(mockFtpClient.retrieveFile(eq(file.getFullPath()), any(OutputStream.class))).thenThrow(new IOException());
 
@@ -202,7 +205,7 @@ public class FtpConnectionTest {
 		expectedException.expect(DownloadFailedException.class);
 		expectedException.expectMessage(is(equalTo("Server returned failure while downloading.")));
 
-		FtpFile file = new FtpFile(TEST_DOWNLOAD_FILE, 1000, "/full/path/to/FileToDownload.txt", new DateTime().getMillis());
+		FtpFile file = new FtpFile(TEST_DOWNLOAD_FILE, 1000, "/full/path/to/FileToDownload.txt", new DateTime().getMillis(), false);
 
 		when(mockFtpClient.retrieveFile(eq(file.getFullPath()), any(OutputStream.class))).thenReturn(false);
 
@@ -218,11 +221,13 @@ public class FtpConnectionTest {
 
 		for (int i = 0; i < 3; i++) {
 
-			FTPFile file = new FTPFile();
-			file.setName("File " + (i + 1));
-			file.setSize((i + 1) * 1000);
-			file.setTimestamp(calendar);
-
+			FTPFile file = mock(FTPFile.class);
+			
+			when(file.getName()).thenReturn("File " + (i + 1));
+			when(file.getSize()).thenReturn((long)(i + 1) * 1000);
+			when(file.getTimestamp()).thenReturn(calendar);
+			when(file.isDirectory()).thenReturn((i + 1) % 2 == 0 ? true : false);
+			
 			files[i] = file;
 		}
 

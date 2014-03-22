@@ -108,14 +108,17 @@ public class SftpConnectionTest {
 		assertThat(files.get(0).getName(), is(equalTo("File 1")));
 		assertThat(files.get(0).getSize(), is(equalTo(123l)));
 		assertThat(files.get(0).getFullPath(), is(equalTo(DIRECTORY + "/File 1")));
+		assertThat(files.get(0).isDirectory(), is(equalTo(true)));
 
 		assertThat(files.get(1).getName(), is(equalTo("File 2")));
 		assertThat(files.get(1).getSize(), is(equalTo(456l)));
 		assertThat(files.get(1).getFullPath(), is(equalTo(DIRECTORY + "/File 2")));
+		assertThat(files.get(1).isDirectory(), is(equalTo(false)));
 
 		assertThat(files.get(2).getName(), is(equalTo("File 3")));
 		assertThat(files.get(2).getSize(), is(equalTo(789l)));
 		assertThat(files.get(2).getFullPath(), is(equalTo(DIRECTORY + "/File 3")));
+		assertThat(files.get(2).isDirectory(), is(equalTo(true)));
 	}
 
 	@Test
@@ -131,7 +134,7 @@ public class SftpConnectionTest {
 	@Test
 	public void downloadMethodShouldCallChannelGetMethodWithFtpFileNameAndDirectory() throws SftpException {
 
-		FtpFile file = new FtpFile("File Name.txt", 1000, "/remote/server/dir/File Name.txt", 123456789);
+		FtpFile file = new FtpFile("File Name.txt", 1000, "/remote/server/dir/File Name.txt", 123456789, false);
 
 		sftpConnection.download(file, "some/directory");
 
@@ -146,7 +149,7 @@ public class SftpConnectionTest {
 
 		doThrow(new SftpException(999, "")).when(mockChannel).get(anyString(), anyString());
 
-		FtpFile file = new FtpFile("File Name.txt", 1000, "remote/server/dir/File Name.txt", 123456789);
+		FtpFile file = new FtpFile("File Name.txt", 1000, "remote/server/dir/File Name.txt", 123456789, false);
 
 		sftpConnection.download(file, "some/directory");
 	}
@@ -155,14 +158,14 @@ public class SftpConnectionTest {
 
 		Vector<LsEntry> vector = new Vector<LsEntry>();
 
-		vector.add(createSingleEntry("File 1", 123l, 1394525265));
-		vector.add(createSingleEntry("File 2", 456l, 1394652161));
-		vector.add(createSingleEntry("File 3", 789l, 1391879364));
+		vector.add(createSingleEntry("File 1", 123l, 1394525265, true));
+		vector.add(createSingleEntry("File 2", 456l, 1394652161, false));
+		vector.add(createSingleEntry("File 3", 789l, 1391879364, true));
 
 		return vector;
 	}
 
-	private LsEntry createSingleEntry(String fileName, long size, int mTime) {
+	private LsEntry createSingleEntry(String fileName, long size, int mTime, boolean directory) {
 
 		SftpATTRS attributes = mock(SftpATTRS.class);
 		when(attributes.getSize()).thenReturn(size);
@@ -171,7 +174,8 @@ public class SftpConnectionTest {
 		LsEntry entry = mock(LsEntry.class);
 		when(entry.getAttrs()).thenReturn(attributes);
 		when(entry.getFilename()).thenReturn(fileName);
-
+		when(entry.getAttrs().isDir()).thenReturn(directory);
+		
 		return entry;
 	}
 

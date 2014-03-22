@@ -8,13 +8,15 @@ public class FtpFile {
 	private long size;
 	private String fullPath;
 	private DateTime lastModified;
-
-	public FtpFile(String name, long size, String fullPath, long mTime) {
+	private boolean directory;
+	
+	public FtpFile(String name, long size, String fullPath, long mTime, boolean isDirectory) {
 
 		this.name = name;
 		this.size = size;
 		this.fullPath = fullPath;
 		this.lastModified = new DateTime(mTime);
+		this.directory = isDirectory;
 	}
 
 	public String getName() {
@@ -33,4 +35,7 @@ public class FtpFile {
 		return lastModified;
 	}
 
+	public boolean isDirectory() {
+		return directory;
+	}
 }

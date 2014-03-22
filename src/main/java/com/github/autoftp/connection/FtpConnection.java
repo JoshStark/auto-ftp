@@ -99,7 +99,8 @@ public class FtpConnection implements Connection {
 		long fileSize = ftpFile.getSize();
 		String fullPath = String.format("%s%s%s", currentDirectory, FILE_SEPARATOR, ftpFile.getName());
 		long mTime = ftpFile.getTimestamp().getTime().getTime();
+		boolean isDirectory = ftpFile.isDirectory();		
 
-		return new FtpFile(name, fileSize, fullPath, mTime);
+		return new FtpFile(name, fileSize, fullPath, mTime, isDirectory);
 	}
 }

@@ -86,7 +86,7 @@ public class ConnectionScheduleTest {
 
 		connectionScheduler.registerListener(mockListener);
 	}
-	
+
 	@Test
 	public void openingAConnectionShouldGetHostConfigFromSettings() {
 
@@ -208,19 +208,26 @@ public class ConnectionScheduleTest {
 		List<FtpFile> filteredFiles = connectionScheduler.filterFilesToCreateDownloadQueue(filesToFilter);
 
 		InOrder inOrder = Mockito.inOrder(mockListener, mockSettingsProvider);
-		
+
 		inOrder.verify(mockListener).onFilterListObtained(filteredFiles);
-		inOrder.verify(mockSettingsProvider).setLastRunDate(any(DateTime.class)); // I really hate having to use any().
+		inOrder.verify(mockSettingsProvider).setLastRunDate(any(DateTime.class)); // I
+																				  // really
+																				  // hate
+																				  // having
+																				  // to
+																				  // use
+																				  // any().
 	}
-	
+
 	@Test
 	public void ifThereAreNoFilesToDownloadThenListenersShouldNotBeNotified() {
-		
+
 		List<FtpFile> filesToFilter = new ArrayList<FtpFile>();
-		filesToFilter.add(new FtpFile("File 1", 8000l, "/full/path/to/File 1", new DateTime(2014, 1, 5, 07, 0, 0).getMillis()));
-		
+		filesToFilter.add(new FtpFile("File 1", 8000l, "/full/path/to/File 1", new DateTime(2014, 1, 5, 07, 0, 0).getMillis(),
+		        false));
+
 		List<FtpFile> filteredFiles = connectionScheduler.filterFilesToCreateDownloadQueue(filesToFilter);
-		
+
 		verify(mockListener, times(0)).onFilterListObtained(filteredFiles);
 	}
 
@@ -238,7 +245,7 @@ public class ConnectionScheduleTest {
 	public void whenDownloadingAFileTheSchedulerShouldCallOnSettingsToObtainTheLocalDirectory() {
 
 		FtpFile fileToDownload = new FtpFile("File 1", 8000l, "/full/path/to/File 1",
-		        new DateTime(2014, 1, 5, 07, 0, 0).getMillis());
+		        new DateTime(2014, 1, 5, 07, 0, 0).getMillis(), false);
 
 		connectionScheduler.downloadFile(fileToDownload);
 
@@ -251,7 +258,7 @@ public class ConnectionScheduleTest {
 		when(mockSettingsProvider.getDownloadDirectory()).thenReturn("local/directory");
 
 		FtpFile fileToDownload = new FtpFile("File 1", 8000l, "/full/path/to/File 1",
-		        new DateTime(2014, 1, 5, 07, 0, 0).getMillis());
+		        new DateTime(2014, 1, 5, 07, 0, 0).getMillis(), false);
 
 		connectionScheduler.downloadFile(fileToDownload);
 
@@ -264,7 +271,7 @@ public class ConnectionScheduleTest {
 		when(mockSettingsProvider.getDownloadDirectory()).thenReturn("local/directory");
 
 		FtpFile fileToDownload = new FtpFile("File 1", 8000l, "/full/path/to/File 1",
-		        new DateTime(2014, 1, 5, 07, 0, 0).getMillis());
+		        new DateTime(2014, 1, 5, 07, 0, 0).getMillis(), false);
 
 		InOrder inOrder = Mockito.inOrder(mockListener, mockConnection);
 
@@ -281,7 +288,7 @@ public class ConnectionScheduleTest {
 		when(mockSettingsProvider.getDownloadDirectory()).thenReturn("local/directory");
 
 		FtpFile fileToDownload = new FtpFile("File 1", 8000l, "/full/path/to/File 1",
-		        new DateTime(2014, 1, 5, 07, 0, 0).getMillis());
+		        new DateTime(2014, 1, 5, 07, 0, 0).getMillis(), false);
 
 		doThrow(new DownloadFailedException("Unable to download file")).when(mockConnection).download(fileToDownload,
 		        "local/directory");
@@ -316,11 +323,11 @@ public class ConnectionScheduleTest {
 
 		List<FtpFile> files = new ArrayList<FtpFile>();
 
-		files.add(new FtpFile("File 1", 8000l, "/full/path/to/File 1", new DateTime(2014, 1, 5, 07, 0, 0).getMillis()));
-		files.add(new FtpFile("File 2", 54000l, "/full/path/to/File 2", new DateTime(2014, 1, 1, 06, 40, 0).getMillis()));
+		files.add(new FtpFile("File 1", 8000l, "/full/path/to/File 1", new DateTime(2014, 1, 5, 07, 0, 0).getMillis(), false));
+		files.add(new FtpFile("File 2", 54000l, "/full/path/to/File 2", new DateTime(2014, 1, 1, 06, 40, 0).getMillis(), false));
 		files.add(new FtpFile("File 3 with some text", 240l, "/full/path/to/File 3", new DateTime(2014, 1, 1, 07, 0, 1)
-		        .getMillis()));
-		files.add(new FtpFile("Unusual File 4", 873l, "/full/path/to/File 4", new DateTime(2013, 12, 15, 07, 0, 0).getMillis()));
+		        .getMillis(), false));
+		files.add(new FtpFile("Unusual File 4", 873l, "/full/path/to/File 4", new DateTime(2013, 12, 15, 07, 0, 0).getMillis(), false));
 
 		return files;
 	}

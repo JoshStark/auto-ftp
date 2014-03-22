@@ -81,8 +81,9 @@ public class SftpConnection implements Connection {
 		long fileSize = lsEntry.getAttrs().getSize();
 		String fullPath = String.format("%s%s%s", currentDirectory, FILE_SEPARATOR, lsEntry.getFilename());
 		int mTime = lsEntry.getAttrs().getMTime();
+		boolean directory = lsEntry.getAttrs().isDir();
 
-		return new FtpFile(name, fileSize, fullPath, (long) mTime * MILLIS);
+		return new FtpFile(name, fileSize, fullPath, (long) mTime * MILLIS, directory);
 	}
 
 }
