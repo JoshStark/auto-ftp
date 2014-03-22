@@ -1,14 +1,15 @@
-package com.github.autoftp;
+package com.github.autoftp.schedule;
 
 import java.util.List;
 
+import com.github.autoftp.ConnectionListener;
 import com.github.autoftp.connection.FtpFile;
 
 public class TestRunner implements ConnectionListener {
 
 	public void run() {
 		
-		ConnectionScheduler connectionScheduler = new ConnectionScheduler();
+		ConnectionSchedule connectionScheduler = new ConnectionSchedule();
 		connectionScheduler.registerListener(this);
 		
 		Thread thread = new Thread(connectionScheduler);

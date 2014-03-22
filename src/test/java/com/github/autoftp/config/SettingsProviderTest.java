@@ -30,6 +30,7 @@ import com.github.autoftp.exception.FileConfigurationException;
 
 public class SettingsProviderTest {
 
+	private static final String INTERVAL = "interval";
 	private static final String HOST_FILE_DIR = "host.file-dir";
 	private static final String HOST_PORT = "host.port";
 	private static final String HOST_TYPE = "host.type";
@@ -126,6 +127,23 @@ public class SettingsProviderTest {
 		settingsProvider.setFilterExpressions(filters);
 		
 		verify(propertiesConfiguration).setProperty(FILE_FILTER_LIST, filters);
+	}
+	
+	@Test
+	public void setConnectionIntervalShouldCallPropertiesConfiguration() throws ConfigurationException {
+		
+		settingsProvider.setConnectionInterval(5);
+		
+		verify(propertiesConfiguration).setProperty(INTERVAL, 5);
+		verify(propertiesConfiguration).save();
+	}
+	
+	@Test
+	public void getConnectionIntervalShouldCallPropertiesConfigurationAndReturnValue() {
+		
+		when(propertiesConfiguration.getInt(INTERVAL)).thenReturn(3);
+		
+		assertThat(settingsProvider.getConnectionInterval(), is(equalTo(3)));
 	}
 	
 	@Test

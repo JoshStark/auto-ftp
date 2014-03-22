@@ -1,4 +1,4 @@
-package com.github.autoftp;
+package com.github.autoftp.schedule;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -23,6 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
+import com.github.autoftp.ConnectionListener;
 import com.github.autoftp.client.Client;
 import com.github.autoftp.client.ClientFactory;
 import com.github.autoftp.client.ClientFactory.ClientType;
@@ -35,11 +36,12 @@ import com.github.autoftp.exception.ConnectionInitialisationException;
 import com.github.autoftp.exception.DownloadFailedException;
 import com.github.autoftp.exception.FileListingException;
 import com.github.autoftp.exception.NoSuchDirectoryException;
+import com.github.autoftp.schedule.ConnectionSchedule;
 
-public class ConnectionSchedulerTest {
+public class ConnectionScheduleTest {
 
 	@InjectMocks
-	private ConnectionScheduler connectionScheduler = new ConnectionScheduler();
+	private ConnectionSchedule connectionScheduler = new ConnectionSchedule();
 
 	@Mock
 	private SettingsProvider mockSettingsProvider;

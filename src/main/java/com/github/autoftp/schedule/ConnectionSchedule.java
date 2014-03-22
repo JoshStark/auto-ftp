@@ -1,4 +1,4 @@
-package com.github.autoftp;
+package com.github.autoftp.schedule;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
+import com.github.autoftp.PatternBuilder;
 import com.github.autoftp.client.Client;
 import com.github.autoftp.client.ClientFactory;
 import com.github.autoftp.config.HostConfig;
@@ -18,7 +19,7 @@ import com.github.autoftp.exception.DownloadFailedException;
 import com.github.autoftp.exception.FileListingException;
 import com.github.autoftp.exception.NoSuchDirectoryException;
 
-public class ConnectionScheduler extends ConnectionNotifier implements Runnable {
+public class ConnectionSchedule extends ConnectionNotifier implements Runnable {
 
 	private Client client;
 	private Connection connection;
@@ -26,7 +27,7 @@ public class ConnectionScheduler extends ConnectionNotifier implements Runnable 
 	private SettingsProvider settingsProvider;
 	private PatternBuilder patternBuilder;
 
-	public ConnectionScheduler() {
+	public ConnectionSchedule() {
 
 		clientFactory = new ClientFactory();
 		settingsProvider = new SettingsProvider();

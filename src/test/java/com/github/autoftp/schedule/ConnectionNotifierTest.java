@@ -1,4 +1,4 @@
-package com.github.autoftp;
+package com.github.autoftp.schedule;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -14,7 +14,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import com.github.autoftp.ConnectionListener;
 import com.github.autoftp.connection.FtpFile;
+import com.github.autoftp.schedule.ConnectionNotifier;
 
 public class ConnectionNotifierTest {
 

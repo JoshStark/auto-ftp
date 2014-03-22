@@ -14,6 +14,7 @@ import com.github.autoftp.exception.FileConfigurationException;
 
 public class SettingsProvider {
 
+	private static final String INTERVAL = "interval";
 	private static final String HOST_FILE_DIR = "host.file-dir";
 	private static final String HOST_PORT = "host.port";
 	private static final String HOST_TYPE = "host.type";
@@ -37,19 +38,15 @@ public class SettingsProvider {
 
 		try {
 
-			if (xmlConfigFile.exists())
-				propertiesConfiguration = new PropertiesConfiguration(xmlConfigFile);
-
-			else {
+			if (!xmlConfigFile.exists())
 				xmlConfigFile.createNewFile();
-				propertiesConfiguration = new PropertiesConfiguration(xmlConfigFile);
-			}
+
+			propertiesConfiguration = new PropertiesConfiguration(xmlConfigFile);
 
 		} catch (ConfigurationException e) {
-
+			throw new FileConfigurationException("Unable to load config file", e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new FileConfigurationException("Unable to load config file", e);
 		}
 	}
 
@@ -123,6 +120,17 @@ public class SettingsProvider {
 		return hostConfig;
 	}
 
+	public void setConnectionInterval(int minutes) {
+		
+		propertiesConfiguration.setProperty(INTERVAL, minutes);
+		
+		saveConfig();
+	}
+	
+	public int getConnectionInterval() {
+		return propertiesConfiguration.getInt(INTERVAL);
+	}
+	
 	private void saveConfig() {
 
 		try {
