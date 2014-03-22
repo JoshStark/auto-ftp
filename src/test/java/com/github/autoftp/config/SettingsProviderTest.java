@@ -11,11 +11,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Rule;
@@ -25,12 +26,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import com.github.autoftp.client.ClientFactory.ClientType;
-import com.github.autoftp.exception.ConfigCorruptedException;
+import com.github.autoftp.exception.FileConfigurationException;
 
 public class SettingsProviderTest {
 
 	private static final String HOST_FILE_DIR = "host.file-dir";
-	private static final String HOST = "host";
 	private static final String HOST_PORT = "host.port";
 	private static final String HOST_TYPE = "host.type";
 	private static final String HOST_PASSWORD = "host.password";
@@ -46,7 +46,7 @@ public class SettingsProviderTest {
 	private SettingsProvider settingsProvider = new SettingsProvider();
 
 	@Mock
-	private XMLConfiguration xmlConfiguration;
+	private PropertiesConfiguration propertiesConfiguration;
 
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
@@ -55,56 +55,55 @@ public class SettingsProviderTest {
 	public void setUp() {
 		initMocks(this);
 
-		when(xmlConfiguration.getList(FILE_FILTER_LIST)).thenReturn(initFilterList());
+		when(propertiesConfiguration.getList(FILE_FILTER_LIST)).thenReturn(initFilterList());
 	}
 
 	@Test
-	public void setDownloadDirectoryShouldCallXmlConfigurationToSetDownloadDirectory() throws ConfigurationException {
+	public void setDownloadDirectoryShouldCallPropertiesConfigurationToSetDownloadDirectory() throws ConfigurationException {
 
 		settingsProvider.setDownloadDirectory(THIS_IS_A_DOWNLOAD_DIR);
 
-		verify(xmlConfiguration).clearProperty(APP_DOWNLOAD_DIR);
-		verify(xmlConfiguration).addProperty(APP_DOWNLOAD_DIR, THIS_IS_A_DOWNLOAD_DIR);
-		verify(xmlConfiguration).save();
+		verify(propertiesConfiguration).setProperty(APP_DOWNLOAD_DIR, THIS_IS_A_DOWNLOAD_DIR);
+		verify(propertiesConfiguration).save();
 	}
 
 	@Test
 	public void ifConfigUnableToSaveThenShouldThrowConfigCorruptedException() throws ConfigurationException {
 
-		doThrow(new ConfigurationException()).when(xmlConfiguration).save();
+		doThrow(new ConfigurationException()).when(propertiesConfiguration).save();
 
-		expectedException.expect(ConfigCorruptedException.class);
+		expectedException.expect(FileConfigurationException.class);
 		expectedException.expectMessage(is(equalTo("Unable to save new configuration property.")));
 
 		settingsProvider.setDownloadDirectory(THIS_IS_A_DOWNLOAD_DIR);
 	}
 
 	@Test
-	public void getDownloadDirectoryShouldCalLXmlConfigurationToGetDownloadDirectory() {
+	public void getDownloadDirectoryShouldCalLPropertiesConfigurationToGetDownloadDirectory() {
 
 		settingsProvider.getDownloadDirectory();
 
-		verify(xmlConfiguration).getString(APP_DOWNLOAD_DIR);
+		verify(propertiesConfiguration).getString(APP_DOWNLOAD_DIR);
 	}
 
 	@Test
-	public void getDownloadDirectoryShouldReturnValueFromXmlConfiguration() {
+	public void getDownloadDirectoryShouldReturnValueFromPropertiesConfiguration() {
 
-		when(xmlConfiguration.getString(APP_DOWNLOAD_DIR)).thenReturn(THIS_IS_A_DOWNLOAD_DIR);
+		when(propertiesConfiguration.getString(APP_DOWNLOAD_DIR)).thenReturn(THIS_IS_A_DOWNLOAD_DIR);
 
 		assertThat(settingsProvider.getDownloadDirectory(), is(equalTo(THIS_IS_A_DOWNLOAD_DIR)));
 	}
 
 	@Test
-	public void getFilterExpressionsShouldCallXmlConfigurationToReturnListOfStrings() {
+	public void getFilterExpressionsShouldCallPropertiesConfigurationToReturnListOfStrings() {
 
 		settingsProvider.getFilterExpressions();
 
-		verify(xmlConfiguration).getList(FILE_FILTER_LIST);
+		verify(propertiesConfiguration).getList(FILE_FILTER_LIST);
 	}
 
 	@Test
-	public void objectListReturnedFromGetListMethodInXmlConfigurationShouldBeConvertedToStringList() {
+	public void objectListReturnedFromGetListMethodInPropertiesConfigurationShouldBeConvertedToStringList() {
 
 		List<String> filters = settingsProvider.getFilterExpressions();
 
@@ -113,21 +112,20 @@ public class SettingsProviderTest {
 	}
 
 	@Test
-	public void listSizeReturnedFromGetFilterExpressionsShouldMatchListSizeReturnedFromXmlConfiguration() {
+	public void listSizeReturnedFromGetFilterExpressionsShouldMatchListSizeReturnedFromPropertiesConfiguration() {
 
 		assertThat(settingsProvider.getFilterExpressions().size(), is(equalTo(3)));
 	}
 	
 	@Test
-	public void setFilterExpressionsShouldTakeInListOfStringsAndCallXmlConfigurationAddProperty() {
+	public void setFilterExpressionsShouldTakeInListOfStringsAndCallPropertiesConfigurationsetProperty() {
 		
 		List<String> filters = new ArrayList<String>();
 		filters.add("New String");
 		
 		settingsProvider.setFilterExpressions(filters);
 		
-		verify(xmlConfiguration).clearProperty(FILE_FILTER_LIST);
-		verify(xmlConfiguration).addProperty(FILE_FILTER_LIST, filters);
+		verify(propertiesConfiguration).setProperty(FILE_FILTER_LIST, filters);
 	}
 	
 	@Test
@@ -138,19 +136,18 @@ public class SettingsProviderTest {
 		
 		settingsProvider.setFilterExpressions(filters);
 		
-		verify(xmlConfiguration).save();
+		verify(propertiesConfiguration).save();
 	}
 	
 	@Test
-	public void setLastRunDateShouldAddNewPropertyToXmlConfiguration() throws ConfigurationException {
+	public void setLastRunDateShouldAddNewPropertyToPropertiesConfiguration() throws ConfigurationException {
 		
 		DateTime dateTime = new DateTime(123456789);
 		
 		settingsProvider.setLastRunDate(dateTime);
 		
-		verify(xmlConfiguration).clearProperty(LAST_RUN);
-		verify(xmlConfiguration).addProperty(LAST_RUN, 123456789l);
-		verify(xmlConfiguration).save();
+		verify(propertiesConfiguration).setProperty(LAST_RUN, 123456789l);
+		verify(propertiesConfiguration).save();
 	}
 	
 	@Test
@@ -158,7 +155,7 @@ public class SettingsProviderTest {
 		
 		DateTime dateTime = new DateTime(123456789);
 		
-		when(xmlConfiguration.getLong(eq(LAST_RUN), anyLong())).thenReturn(123456789l);
+		when(propertiesConfiguration.getLong(eq(LAST_RUN), anyLong())).thenReturn(123456789l);
 		
 		assertThat(settingsProvider.getLastRunDate(), is(equalTo(dateTime)));
 	}
@@ -166,21 +163,21 @@ public class SettingsProviderTest {
 	@Test
 	public void getHostConfigShouldCompileMultipleObjectValuesFromConfigIntoHostConfigObject() {
 		
-		when(xmlConfiguration.getString(HOST_NAME)).thenReturn("hostname");
-		when(xmlConfiguration.getString(HOST_USER)).thenReturn("a user");
-		when(xmlConfiguration.getString(HOST_PASSWORD)).thenReturn("a password");
-		when(xmlConfiguration.getInt(HOST_PORT)).thenReturn(80);
-		when(xmlConfiguration.getString(HOST_TYPE)).thenReturn("SFTP");
-		when(xmlConfiguration.getString(HOST_FILE_DIR)).thenReturn("remote/directory");
+		when(propertiesConfiguration.getString(HOST_NAME)).thenReturn("hostname");
+		when(propertiesConfiguration.getString(HOST_USER)).thenReturn("a user");
+		when(propertiesConfiguration.getString(HOST_PASSWORD)).thenReturn("a password");
+		when(propertiesConfiguration.getInt(HOST_PORT)).thenReturn(80);
+		when(propertiesConfiguration.getString(HOST_TYPE)).thenReturn("SFTP");
+		when(propertiesConfiguration.getString(HOST_FILE_DIR)).thenReturn("remote/directory");
 		
 		HostConfig hostConfig = settingsProvider.getHost();
 		
-		verify(xmlConfiguration).getString(HOST_NAME);
-		verify(xmlConfiguration).getString(HOST_USER);
-		verify(xmlConfiguration).getString(HOST_PASSWORD);
-		verify(xmlConfiguration).getString(HOST_TYPE);
-		verify(xmlConfiguration).getInt(HOST_PORT);
-		verify(xmlConfiguration).getString(HOST_FILE_DIR);
+		verify(propertiesConfiguration).getString(HOST_NAME);
+		verify(propertiesConfiguration).getString(HOST_USER);
+		verify(propertiesConfiguration).getString(HOST_PASSWORD);
+		verify(propertiesConfiguration).getString(HOST_TYPE);
+		verify(propertiesConfiguration).getInt(HOST_PORT);
+		verify(propertiesConfiguration).getString(HOST_FILE_DIR);
 		
 		assertThat(hostConfig.getHostname(), is(equalTo("hostname")));
 		assertThat(hostConfig.getPassword(), is(equalTo("a password")));
@@ -191,7 +188,7 @@ public class SettingsProviderTest {
 	}
 	
 	@Test
-	public void setHostConfigShouldTakeHostConfigObjectAndWriteToXmlForEveryField() throws ConfigurationException {
+	public void setHostConfigShouldTakeHostConfigObjectAndWriteToPropertiesForEveryField() throws ConfigurationException {
 		
 		HostConfig config = new HostConfig();
 		
@@ -204,15 +201,25 @@ public class SettingsProviderTest {
 		
 		settingsProvider.setHost(config);
 		
-		verify(xmlConfiguration).clearTree(HOST);
-		verify(xmlConfiguration).addProperty(HOST_NAME, "hostname");
-		verify(xmlConfiguration).addProperty(HOST_PASSWORD, "password");
-		verify(xmlConfiguration).addProperty(HOST_PORT, 80);
-		verify(xmlConfiguration).addProperty(HOST_TYPE, "SFTP");
-		verify(xmlConfiguration).addProperty(HOST_USER, "username");
-		verify(xmlConfiguration).addProperty(HOST_FILE_DIR, "remote/directory");
+		verify(propertiesConfiguration).setProperty(HOST_NAME, "hostname");
+		verify(propertiesConfiguration).setProperty(HOST_PASSWORD, "password");
+		verify(propertiesConfiguration).setProperty(HOST_PORT, 80);
+		verify(propertiesConfiguration).setProperty(HOST_TYPE, "SFTP");
+		verify(propertiesConfiguration).setProperty(HOST_USER, "username");
+		verify(propertiesConfiguration).setProperty(HOST_FILE_DIR, "remote/directory");
 		
-		verify(xmlConfiguration).save();
+		verify(propertiesConfiguration).save();
+	}
+	
+	@Test
+	public void ifConfigFileDoesNotExistThenConstructorShouldCreateIt() {
+		
+		File file = new File("user-config.properties");
+		file.delete();
+		
+		new SettingsProvider();
+		
+		assertThat(new File("user-config.properties").exists(), is(equalTo(true)));
 	}
 
 	private List<Object> initFilterList() {
