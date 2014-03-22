@@ -4,7 +4,6 @@ apply plugin: 'application'
 apply plugin: 'macAppBundle'
 
 mainClassName = 'com.github.autoftp.Main'
-applicationName = 'Auto FTP'
 
 group 'com.github.autoftp'
 version '0.1'
