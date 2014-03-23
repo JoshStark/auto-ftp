@@ -2,12 +2,13 @@ package com.github.autoftp;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joda.time.DateTime;
-
 import jline.console.ConsoleReader;
+
+import org.joda.time.DateTime;
 
 import com.github.autoftp.client.ClientFactory.ClientType;
 import com.github.autoftp.config.HostConfig;
@@ -17,7 +18,7 @@ import com.github.autoftp.schedule.ConnectionScheduleExecutor;
 
 public class AutoFtpScreen implements ConnectionListener {
 
-	private static final int MB = 1024 * 1024;
+	private static final int MB = 1000 * 1000;
 	private ConsoleReader reader = null;
 	private PrintWriter writer = null;
 	private SettingsProvider settingsProvider;
@@ -168,15 +169,22 @@ public class AutoFtpScreen implements ConnectionListener {
 	@Override
 	public void onDisconnection() {
 		printInfo("Disconnected from server. Going idle.");
-
 	}
 
 	@Override
 	public void onFilterListObtained(List<FtpFile> files) {
-		printInfo(files.size() + " files found.");
+		
+		int fileCount = files.size();
+		
+		printInfo(String.format("%d %s found:", fileCount, (fileCount == 1 ? "file" : "files")));
 
+		writer.println("\r\n");
+		
 		for (FtpFile file : files)
 			printFile(file);
+		
+		writer.println("\r\n");
+		writer.flush();
 	}
 
 	@Override
@@ -218,18 +226,21 @@ public class AutoFtpScreen implements ConnectionListener {
 
 	public void printFile(FtpFile file) {
 
-		String printableSize = "";
-
+		DecimalFormat format = new DecimalFormat("#.##");
+		
+		String extension = "MB";
+		
 		long fileSize = file.getSize();
 		long sizeInMb = fileSize / MB;
 
-		printableSize = sizeInMb + "MB";
+		long printableSize = sizeInMb;
 
-		if (sizeInMb > 1024l)
-			printableSize = (sizeInMb / 1024) + "GB";
+		if (sizeInMb > 1000l) {
+			printableSize = (sizeInMb / 1000);
+			extension = "GB";
+		}
 
-		String formattedMessage = String.format("%s [File] %s\t%s", DateTime.now().toString("dd/MM/yyy HH:mm:ss"), printableSize,
-		        file.getName());
+		String formattedMessage = String.format("\t%s %s\t|\t%s", format.format(printableSize), extension, file.getName());
 
 		writer.println(formattedMessage);
 		writer.flush();
