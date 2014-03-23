@@ -1,13 +1,12 @@
 package com.github.autoftp;
 
-import com.github.autoftp.ui.AutoFtpWindow;
-
-
-
 public class Main {
 
-	public static void main(String[] args) {
+	static {
+		System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
+	}
 
-		new AutoFtpWindow();
+	public static void main(String[] args) {
+		new AutoFtpScreen();
 	}
 }

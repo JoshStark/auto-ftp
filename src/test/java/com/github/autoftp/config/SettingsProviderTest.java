@@ -30,6 +30,7 @@ import com.github.autoftp.exception.FileConfigurationException;
 
 public class SettingsProviderTest {
 
+	private static final String CONFIG_FILE = ".autoftpconfig";
 	private static final String INTERVAL = "interval";
 	private static final String HOST_FILE_DIR = "host.file-dir";
 	private static final String HOST_PORT = "host.port";
@@ -232,12 +233,12 @@ public class SettingsProviderTest {
 	@Test
 	public void ifConfigFileDoesNotExistThenConstructorShouldCreateIt() {
 		
-		File file = new File("user-config.properties");
+		File file = new File(CONFIG_FILE);
 		file.delete();
 		
 		new SettingsProvider();
 		
-		assertThat(new File("user-config.properties").exists(), is(equalTo(true)));
+		assertThat(new File(CONFIG_FILE).exists(), is(equalTo(true)));
 	}
 
 	private List<Object> initFilterList() {

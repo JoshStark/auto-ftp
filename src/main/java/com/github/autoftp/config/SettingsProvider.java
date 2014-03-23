@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.joda.time.DateTime;
 
 import com.github.autoftp.client.ClientFactory.ClientType;
@@ -14,6 +15,7 @@ import com.github.autoftp.exception.FileConfigurationException;
 
 public class SettingsProvider {
 
+	private static final String CONFIG_FILE = ".autoftpconfig";
 	private static final String INTERVAL = "interval";
 	private static final String HOST_FILE_DIR = "host.file-dir";
 	private static final String HOST_PORT = "host.port";
@@ -34,7 +36,7 @@ public class SettingsProvider {
 
 	protected void loadConfig() {
 
-		File xmlConfigFile = new File("user-config.properties");
+		File xmlConfigFile = new File(CONFIG_FILE);
 
 		try {
 
@@ -42,6 +44,7 @@ public class SettingsProvider {
 				xmlConfigFile.createNewFile();
 
 			propertiesConfiguration = new PropertiesConfiguration(xmlConfigFile);
+			propertiesConfiguration.setReloadingStrategy(new FileChangedReloadingStrategy());
 
 		} catch (ConfigurationException e) {
 			throw new FileConfigurationException("Unable to load config file", e);
