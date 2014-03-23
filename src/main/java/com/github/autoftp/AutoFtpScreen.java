@@ -17,6 +17,7 @@ import com.github.autoftp.schedule.ConnectionScheduleExecutor;
 
 public class AutoFtpScreen implements ConnectionListener {
 
+	private static final int MB = 1024 * 1024;
 	private ConsoleReader reader = null;
 	private PrintWriter writer = null;
 	private SettingsProvider settingsProvider;
@@ -172,10 +173,10 @@ public class AutoFtpScreen implements ConnectionListener {
 
 	@Override
 	public void onFilterListObtained(List<FtpFile> files) {
-		printInfo("Found files to download:");
+		printInfo(files.size() + " files found.");
 
 		for (FtpFile file : files)
-			writer.println(file.getName());
+			printFile(file);
 	}
 
 	@Override
@@ -197,18 +198,40 @@ public class AutoFtpScreen implements ConnectionListener {
 	public void printDownload(String filename) {
 		String formattedMessage = String.format("%s [Download] %s", DateTime.now().toString("dd/MM/yyy HH:mm:ss"), filename);
 
-		System.out.println(formattedMessage);
+		writer.println(formattedMessage);
+		writer.flush();
 	}
 
 	public void printError(String message) {
 		String formattedMessage = String.format("%s [Error] %s", DateTime.now().toString("dd/MM/yyy HH:mm:ss"), message);
 
-		System.out.println(formattedMessage);
+		writer.println(formattedMessage);
+		writer.flush();
 	}
 
 	public void printInfo(String info) {
 		String formattedMessage = String.format("%s [Info] %s", DateTime.now().toString("dd/MM/yyy HH:mm:ss"), info);
 
-		System.out.println(formattedMessage);
+		writer.println(formattedMessage);
+		writer.flush();
+	}
+
+	public void printFile(FtpFile file) {
+
+		String printableSize = "";
+
+		long fileSize = file.getSize();
+		long sizeInMb = fileSize / MB;
+
+		printableSize = sizeInMb + "MB";
+
+		if (sizeInMb > 1024l)
+			printableSize = (sizeInMb / 1024) + "GB";
+
+		String formattedMessage = String.format("%s [File] %s\t%s", DateTime.now().toString("dd/MM/yyy HH:mm:ss"), printableSize,
+		        file.getName());
+
+		writer.println(formattedMessage);
+		writer.flush();
 	}
 }
