@@ -3,6 +3,7 @@ package com.github.autoftp.client;
 import com.github.autoftp.connection.Connection;
 import com.github.autoftp.connection.ConnectionFactory;
 import com.github.autoftp.exception.ClientDisconnectionException;
+import com.github.autoftp.exception.ConnectionInitialisationException;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -11,6 +12,7 @@ import com.jcraft.jsch.Session;
 public class SftpClient extends Client {
 
 	private static final String SFTP = "sftp";
+	private static final String CONNECTION_ERROR_MESSAGE = "Unable to connect to host %s on port %d";
 
 	private JSch jsch;
 	private ConnectionFactory connectionFactory;
@@ -40,7 +42,7 @@ public class SftpClient extends Client {
 			channel.connect();
 
 		} catch (JSchException e) {
-			e.printStackTrace();
+			throw new ConnectionInitialisationException(String.format(CONNECTION_ERROR_MESSAGE, host, port), e);
 		}
 
 		return connectionFactory.createSftpConnection(channel);

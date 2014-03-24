@@ -18,7 +18,7 @@ import com.github.autoftp.schedule.ConnectionScheduleExecutor;
 
 public class AutoFtpScreen implements ConnectionListener {
 
-	private static final int MB = 1000 * 1000;
+	private static final int MB = 1024 * 1024;
 	private ConsoleReader reader = null;
 	private PrintWriter writer = null;
 	private SettingsProvider settingsProvider;
@@ -233,10 +233,10 @@ public class AutoFtpScreen implements ConnectionListener {
 		long fileSize = file.getSize();
 		long sizeInMb = fileSize / MB;
 
-		long printableSize = sizeInMb;
+		double printableSize = sizeInMb;
 
 		if (sizeInMb > 1000l) {
-			printableSize = (sizeInMb / 1000);
+			printableSize = (sizeInMb / 1024);
 			extension = "GB";
 		}
 

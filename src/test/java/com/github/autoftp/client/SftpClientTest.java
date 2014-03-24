@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -23,6 +24,7 @@ import com.github.autoftp.connection.Connection;
 import com.github.autoftp.connection.ConnectionFactory;
 import com.github.autoftp.connection.SftpConnection;
 import com.github.autoftp.exception.ClientDisconnectionException;
+import com.github.autoftp.exception.ConnectionInitialisationException;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
@@ -32,6 +34,7 @@ import com.jcraft.jsch.Session;
 public class SftpClientTest {
 
 	private static final String SFTP = "sftp";
+	private static final String CONNECTION_ERROR_MESSAGE = "Unable to connect to host %s on port %d";
 
 	@InjectMocks
 	private SftpClient sftpClient = new SftpClient();
@@ -87,6 +90,18 @@ public class SftpClientTest {
 		sftpClient.connect();
 
 		verify(mockSession).openChannel(SFTP);
+	}
+	
+	@Test
+	public void ifForAnyReasonTheUnderlyingSessionCantConnectThenCatchTheExceptionAndRethrow() throws JSchException {
+		
+		expectedException.expect(ConnectionInitialisationException.class);
+		expectedException.expectMessage(is(equalTo(String.format(CONNECTION_ERROR_MESSAGE, "host", 999))));
+		
+		Session mockSession = mockJsch.getSession("user", "host", 999);
+		doThrow(new JSchException()).when(mockSession).connect();
+
+		sftpClient.connect();
 	}
 
 	@Test

@@ -53,7 +53,6 @@ public class FtpClient extends Client {
 
 		try {
 
-			// This bit's untested as I couldn't find a way to null the object :( boohiss
 			if (null == this.ftpClient)
 				throw new ClientDisconnectionException("The underlying client was null.");
 
