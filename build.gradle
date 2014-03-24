@@ -5,7 +5,7 @@ apply plugin: 'application'
 mainClassName = 'com.github.autoftp.Main'
 
 group 'com.github.autoftp'
-version '0.1'
+version '0.2'
 
 repositories { mavenCentral() }
 
@@ -27,5 +27,17 @@ dependencies {
 
 task wrapper(type: Wrapper) {
     gradleVersion = '1.8'
+}
+
+task autoFtpJar(type: Jar) {
+
+    from files(sourceSets.main.output.classesDir)
+    from files(sourceSets.main.output.resourcesDir)
+    from {configurations.compile.collect {zipTree(it)}}
+    from {configurations.runtime.collect {zipTree(it)}}
+ 
+    manifest {
+        attributes 'Main-Class': 'com.github.autoftp.Main'
+    }
 }
 
