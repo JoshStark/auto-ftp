@@ -5,7 +5,7 @@ Auto FTP
 
 Auto FTP will listen on a connection for new files -- files you're interested in -- and will automatically add them to a download queue and process them. This means you can run this application, set up host information -- including file filters -- then leave it running in the background. It works by:
 
-- Connecting to the host at a [user specified] interval (default every 5 minutes).
+- Connecting to the host at a [user specified] interval.
 - Navigates to a user specified remote directory.
 - Scans all files that have been modified since last scan.
 - Runs files through the filter list, picking out relevant files.

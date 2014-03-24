@@ -1,8 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'application'
-apply plugin: 'launch4j'
-
 
 mainClassName = 'com.github.autoftp.Main'
 
@@ -10,21 +8,6 @@ group 'com.github.autoftp'
 version '0.1'
 
 repositories { mavenCentral() }
-
-launch4j {
-    mainClassName = "com.example.myapp.Start"
-    icon = 'icons/myApp.ico'
-}
-
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'edu.sc.seis.gradle:launch4j:1.0.6'
-    }
-}
 
 dependencies {
     compile 'com.jcraft:jsch:0.1.50'
