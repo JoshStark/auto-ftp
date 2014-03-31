@@ -29,7 +29,7 @@ task wrapper(type: Wrapper) {
     gradleVersion = '1.8'
 }
 
-task autoFtpJar(type: Jar) {
+task autoFtpJar(type: Jar, dependsOn: 'build') {
 
     from files(sourceSets.main.output.classesDir)
     from files(sourceSets.main.output.resourcesDir)

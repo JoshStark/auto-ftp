@@ -163,12 +163,12 @@ public class AutoFtpScreen implements ConnectionListener {
 
 	@Override
 	public void onConnection() {
-		printInfo("Connected to server.");
+		//printInfo("Connected to server.");
 	}
 
 	@Override
 	public void onDisconnection() {
-		printInfo("Disconnected from server. Going idle.");
+		//printInfo("Disconnected from server. Going idle.");
 	}
 
 	@Override
