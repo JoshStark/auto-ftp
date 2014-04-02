@@ -15,6 +15,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import jftp.client.ClientFactory.ClientType;
+import jftp.exception.FileConfigurationException;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.joda.time.DateTime;
@@ -24,9 +27,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-
-import com.github.autoftp.client.ClientFactory.ClientType;
-import com.github.autoftp.exception.FileConfigurationException;
 
 public class SettingsProviderTest {
 

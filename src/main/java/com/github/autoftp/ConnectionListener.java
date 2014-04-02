@@ -2,7 +2,7 @@ package com.github.autoftp;
 
 import java.util.List;
 
-import com.github.autoftp.connection.FtpFile;
+import jftp.connection.FtpFile;
 
 public interface ConnectionListener {
 

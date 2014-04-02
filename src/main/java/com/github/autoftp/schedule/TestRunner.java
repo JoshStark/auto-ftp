@@ -2,8 +2,9 @@ package com.github.autoftp.schedule;
 
 import java.util.List;
 
+import jftp.connection.FtpFile;
+
 import com.github.autoftp.ConnectionListener;
-import com.github.autoftp.connection.FtpFile;
 
 public class TestRunner implements ConnectionListener {
 

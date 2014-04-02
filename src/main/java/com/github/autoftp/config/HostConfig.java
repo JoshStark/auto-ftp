@@ -1,6 +1,6 @@
 package com.github.autoftp.config;
 
-import com.github.autoftp.client.ClientFactory.ClientType;
+import jftp.client.ClientFactory.ClientType;
 
 public class HostConfig {
 

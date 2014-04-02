@@ -5,13 +5,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import jftp.client.ClientFactory.ClientType;
+import jftp.exception.FileConfigurationException;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.joda.time.DateTime;
-
-import com.github.autoftp.client.ClientFactory.ClientType;
-import com.github.autoftp.exception.FileConfigurationException;
 
 public class SettingsProvider {
 

@@ -10,13 +10,13 @@ import static org.mockito.MockitoAnnotations.initMocks;
 import java.util.ArrayList;
 import java.util.List;
 
+import jftp.connection.FtpFile;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
 import com.github.autoftp.ConnectionListener;
-import com.github.autoftp.connection.FtpFile;
-import com.github.autoftp.schedule.ConnectionNotifier;
 
 public class ConnectionNotifierTest {
 

@@ -6,14 +6,14 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import jftp.client.ClientFactory.ClientType;
+import jftp.connection.FtpFile;
 import jline.console.ConsoleReader;
 
 import org.joda.time.DateTime;
 
-import com.github.autoftp.client.ClientFactory.ClientType;
 import com.github.autoftp.config.HostConfig;
 import com.github.autoftp.config.SettingsProvider;
-import com.github.autoftp.connection.FtpFile;
 import com.github.autoftp.schedule.ConnectionScheduleExecutor;
 
 public class AutoFtpScreen implements ConnectionListener {

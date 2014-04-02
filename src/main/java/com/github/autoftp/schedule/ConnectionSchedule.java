@@ -4,20 +4,21 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import jftp.client.Client;
+import jftp.client.ClientFactory;
+import jftp.connection.Connection;
+import jftp.connection.FtpFile;
+import jftp.exception.ClientDisconnectionException;
+import jftp.exception.ConnectionInitialisationException;
+import jftp.exception.DownloadFailedException;
+import jftp.exception.FileListingException;
+import jftp.exception.NoSuchDirectoryException;
+
 import org.joda.time.DateTime;
 
 import com.github.autoftp.PatternBuilder;
-import com.github.autoftp.client.Client;
-import com.github.autoftp.client.ClientFactory;
 import com.github.autoftp.config.HostConfig;
 import com.github.autoftp.config.SettingsProvider;
-import com.github.autoftp.connection.Connection;
-import com.github.autoftp.connection.FtpFile;
-import com.github.autoftp.exception.ClientDisconnectionException;
-import com.github.autoftp.exception.ConnectionInitialisationException;
-import com.github.autoftp.exception.DownloadFailedException;
-import com.github.autoftp.exception.FileListingException;
-import com.github.autoftp.exception.NoSuchDirectoryException;
 
 public class ConnectionSchedule extends ConnectionNotifier implements Runnable {
 
