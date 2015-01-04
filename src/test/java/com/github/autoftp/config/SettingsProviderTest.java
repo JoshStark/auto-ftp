@@ -30,7 +30,7 @@ import org.mockito.Mock;
 
 public class SettingsProviderTest {
 
-	private static final String CONFIG_FILE = ".autoftpconfig";
+	private static final String CONFIG_FILE = "autoftp.conf";
 	private static final String INTERVAL = "interval";
 	private static final String HOST_FILE_DIR = "host.file-dir";
 	private static final String HOST_PORT = "host.port";

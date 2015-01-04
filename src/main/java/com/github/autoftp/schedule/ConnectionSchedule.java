@@ -125,7 +125,7 @@ public class ConnectionSchedule extends ConnectionNotifier implements Runnable {
 
 				String expressionRegex = patternBuilder.buildFromFilterString(expression);
 
-				if (file.getName().matches(expressionRegex))
+				if (file.getName().toLowerCase().matches(expressionRegex.toLowerCase()))
 					filteredFiles.add(file);
 			}
 		}

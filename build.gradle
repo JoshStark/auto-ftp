@@ -5,7 +5,7 @@ apply plugin: 'application'
 mainClassName = 'com.github.autoftp.Main'
 
 group 'com.github.autoftp'
-version '0.2'
+version '0.3'
 
 repositories { mavenCentral() }
 
