@@ -4,7 +4,9 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -65,6 +67,7 @@ public class ConnectionScheduleTest {
 
 	@Before
 	public void setUp() {
+
 		initMocks(this);
 
 		hostConfig = new HostConfig();
@@ -90,7 +93,7 @@ public class ConnectionScheduleTest {
 	@Test
 	public void openingAConnectionShouldGetHostConfigFromSettings() {
 
-		connectionScheduler.openConnectionToHost();
+		connectionScheduler.openConnectionToHost(mockSettingsProvider.getHost());
 
 		verify(mockSettingsProvider).getHost();
 	}
@@ -98,7 +101,7 @@ public class ConnectionScheduleTest {
 	@Test
 	public void openingAConnectionToHostShouldCallOnClientFactoryToReturnClient() {
 
-		connectionScheduler.openConnectionToHost();
+		connectionScheduler.openConnectionToHost(mockSettingsProvider.getHost());
 
 		verify(mockClientFactory).createClient(ClientType.SFTP);
 	}
@@ -106,7 +109,7 @@ public class ConnectionScheduleTest {
 	@Test
 	public void openingAConnectionShouldInsertHostDetailsToClient() {
 
-		connectionScheduler.openConnectionToHost();
+		connectionScheduler.openConnectionToHost(mockSettingsProvider.getHost());
 
 		verify(mockClient).setHost(hostConfig.getHostname());
 		verify(mockClient).setPort(hostConfig.getPort());
@@ -116,7 +119,7 @@ public class ConnectionScheduleTest {
 	@Test
 	public void clientConnectMethodShouldBeCalledWhenOpeningAConnection() {
 
-		connectionScheduler.openConnectionToHost();
+		connectionScheduler.openConnectionToHost(mockSettingsProvider.getHost());
 
 		verify(mockClient).connect();
 	}
@@ -124,7 +127,7 @@ public class ConnectionScheduleTest {
 	@Test
 	public void ifConnectionWasSuccessfulThenListenersShouldBeNotified() {
 
-		connectionScheduler.openConnectionToHost();
+		connectionScheduler.openConnectionToHost(mockSettingsProvider.getHost());
 
 		verify(mockListener).onConnection();
 	}
@@ -134,7 +137,7 @@ public class ConnectionScheduleTest {
 
 		when(mockClient.connect()).thenThrow(new ConnectionInitialisationException("Unable to connect"));
 
-		connectionScheduler.openConnectionToHost();
+		connectionScheduler.openConnectionToHost(mockSettingsProvider.getHost());
 
 		verify(mockListener, times(0)).onConnection();
 		verify(mockListener).onError("Unable to connect");
@@ -143,7 +146,7 @@ public class ConnectionScheduleTest {
 	@Test
 	public void onceConnectedTheConnectionShouldSetTheWorkingDirectory() {
 
-		connectionScheduler.openConnectionToHost();
+		connectionScheduler.run();
 
 		verify(mockConnection).setRemoteDirectory(hostConfig.getFileDirectory());
 	}
@@ -154,7 +157,7 @@ public class ConnectionScheduleTest {
 		doThrow(new NoSuchDirectoryException("Could not change directory")).when(mockConnection).setRemoteDirectory(
 		        hostConfig.getFileDirectory());
 
-		connectionScheduler.openConnectionToHost();
+		connectionScheduler.run();
 
 		verify(mockListener).onError("Could not change directory");
 	}
@@ -311,6 +314,75 @@ public class ConnectionScheduleTest {
 
 		verify(mockListener).onError("Unable to disconnect");
 		verify(mockListener, times(0)).onDisconnection();
+	}
+
+	@Test
+	public void ifConnectionIsUnableToBeOpenedThenNoOtherActionShouldBeTaken() {
+
+		when(mockClient.connect()).thenThrow(new ConnectionInitialisationException(""));
+
+		connectionScheduler.run();
+
+		verify(mockConnection, never()).setRemoteDirectory(anyString());
+		verify(mockSettingsProvider, never()).getLastRunDate();
+		verify(mockConnection, never()).listFiles();
+		verify(mockSettingsProvider, never()).getFilterExpressions();
+		verify(mockSettingsProvider, never()).setLastRunDate(any(DateTime.class));
+		verify(mockSettingsProvider, never()).getDownloadDirectory();
+		verify(mockConnection, never()).download(any(FtpFile.class), anyString());
+		verify(mockClient, never()).disconnect();
+	}
+
+	@Test
+	public void ifUnableToListFilesThenNoOtherActionShouldBeTaken() {
+
+		when(mockConnection.listFiles()).thenThrow(new FileListingException("", new RuntimeException()));
+
+		connectionScheduler.run();
+
+		verify(mockClient).connect();
+		verify(mockConnection).setRemoteDirectory(anyString());
+		verify(mockSettingsProvider).getLastRunDate();
+		verify(mockConnection).listFiles();
+		verify(mockSettingsProvider, never()).getFilterExpressions();
+		verify(mockSettingsProvider, never()).setLastRunDate(any(DateTime.class));
+		verify(mockSettingsProvider, never()).getDownloadDirectory();
+		verify(mockConnection, never()).download(any(FtpFile.class), anyString());
+		verify(mockClient).disconnect();
+	}
+
+	@Test
+	public void ifUnableToDownloadFilesThenNoOtherActionShouldBeTaken() {
+
+		doThrow(new DownloadFailedException("")).when(mockConnection).download(any(FtpFile.class), anyString());
+
+		when(mockConnection.listFiles()).thenReturn(createFiles());
+		
+		connectionScheduler.run();
+
+		verify(mockClient).connect();
+		verify(mockConnection).setRemoteDirectory(anyString());
+		verify(mockSettingsProvider).getLastRunDate();
+		verify(mockSettingsProvider).getFilterExpressions();
+		verify(mockSettingsProvider).setLastRunDate(any(DateTime.class));
+		verify(mockSettingsProvider).getDownloadDirectory();
+		verify(mockClient).disconnect();
+	}
+
+	@Test
+	public void ifRemoteDirectoryCannotBeNavigatedToThenNoOtherActionShouldBeTaken() {
+
+		doThrow(new NoSuchDirectoryException("")).when(mockConnection).setRemoteDirectory(anyString());
+
+		connectionScheduler.run();
+
+		verify(mockSettingsProvider, never()).getLastRunDate();
+		verify(mockConnection, never()).listFiles();
+		verify(mockSettingsProvider, never()).getFilterExpressions();
+		verify(mockSettingsProvider, never()).setLastRunDate(any(DateTime.class));
+		verify(mockSettingsProvider, never()).getDownloadDirectory();
+		verify(mockConnection, never()).download(any(FtpFile.class), anyString());
+		verify(mockClient).disconnect();
 	}
 
 	private List<FtpFile> createFiles() {

@@ -38,20 +38,25 @@ public class ConnectionSchedule extends ConnectionNotifier implements Runnable {
 	@Override
 	public void run() {
 
-		openConnectionToHost();
+		HostConfig host = settingsProvider.getHost();
 
-		List<FtpFile> files = retrieveFilesAfterLastScan();
-		List<FtpFile> filtered = filterFilesToCreateDownloadQueue(files);
+		if (openConnectionToHost(host)) {
 
-		for (FtpFile file : filtered)
-			downloadFile(file);
+			try {
 
-		closeConnectionToHost();
+				moveToRemoteDownloadFolder(host.getFileDirectory());
+
+				downloadFilteredFiles(retrieveFilesAfterLastScan());
+
+			} catch (NoSuchDirectoryException e) {
+				notifyOfError(e.getMessage());
+			}
+
+			closeConnectionToHost();
+		}
 	}
 
-	protected void openConnectionToHost() {
-
-		HostConfig host = settingsProvider.getHost();
+	protected boolean openConnectionToHost(HostConfig host) {
 
 		client = clientFactory.createClient(host.getClientType());
 
@@ -65,13 +70,13 @@ public class ConnectionSchedule extends ConnectionNotifier implements Runnable {
 
 			notifyOfConnectionOpening();
 
-			moveToRemoteDownloadFolder(host.getFileDirectory());
+			return true;
 
 		} catch (ConnectionInitialisationException e) {
 			notifyOfError(e.getMessage());
-		} catch (NoSuchDirectoryException e) {
-			notifyOfError(e.getMessage());
 		}
+
+		return false;
 	}
 
 	protected void closeConnectionToHost() {
@@ -89,7 +94,7 @@ public class ConnectionSchedule extends ConnectionNotifier implements Runnable {
 
 	protected List<FtpFile> retrieveFilesAfterLastScan() {
 
-		List<FtpFile> files = null;
+		List<FtpFile> files = new ArrayList<FtpFile>();
 
 		try {
 
@@ -132,7 +137,7 @@ public class ConnectionSchedule extends ConnectionNotifier implements Runnable {
 
 		if (!filteredFiles.isEmpty())
 			notifyOfFilesToDownload(filteredFiles);
-		
+
 		settingsProvider.setLastRunDate(DateTime.now());
 
 		return filteredFiles;
@@ -157,5 +162,16 @@ public class ConnectionSchedule extends ConnectionNotifier implements Runnable {
 
 	private void moveToRemoteDownloadFolder(String remoteDirectory) {
 		connection.setRemoteDirectory(remoteDirectory);
+	}
+
+	private void downloadFilteredFiles(List<FtpFile> files) {
+
+		if (!files.isEmpty()) {
+
+			List<FtpFile> filtered = filterFilesToCreateDownloadQueue(files);
+
+			for (FtpFile file : filtered)
+				downloadFile(file);
+		}
 	}
 }
