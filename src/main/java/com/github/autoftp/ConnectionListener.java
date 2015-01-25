@@ -11,5 +11,5 @@ public interface ConnectionListener {
 	void onFilterListObtained(List<FtpFile> files);
 	void onError(String errorMessage);
 	void onDownloadStarted(String filename);
-	void onDownloadFinished();
+	void onDownloadFinished(String filename);
 }

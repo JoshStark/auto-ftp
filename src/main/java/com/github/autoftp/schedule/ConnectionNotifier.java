@@ -49,9 +49,9 @@ public class ConnectionNotifier {
 			listener.onDownloadStarted(filename);
 	}
 
-	public void notifyOnDownloadFinished() {
+	public void notifyOnDownloadFinished(String filename) {
 
 		for (ConnectionListener listener : listeners)
-			listener.onDownloadFinished();
+			listener.onDownloadFinished(filename);
 	}
 }

@@ -53,7 +53,7 @@ public class AutoFtpScreen implements ConnectionListener {
 	}
 
 	@Override
-	public void onDownloadFinished() {
+	public void onDownloadFinished(String filename) {
 		printInfo("Download finished.");
 	}
 

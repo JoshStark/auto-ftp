@@ -26,6 +26,8 @@ public class SettingsProvider {
 	private static final String LAST_RUN = "last-run";
 	private static final String APP_DOWNLOAD_DIR = "download-dir";
 	private static final String FILE_FILTER_LIST = "filters.expression";
+	private static final String MOVE_ENABLED = "move.enabled";
+	private static final String MOVE_DIRECTORY = "move.directory";
 
 	private PropertiesConfiguration propertiesConfiguration;
 
@@ -64,6 +66,28 @@ public class SettingsProvider {
 		return propertiesConfiguration.getString(APP_DOWNLOAD_DIR);
 	}
 
+	public boolean isMoveEnabled() {
+		return propertiesConfiguration.getBoolean(MOVE_ENABLED);
+	}
+	
+	public void setMoveEnabled(boolean moveEnabled) {
+		
+		propertiesConfiguration.setProperty(MOVE_ENABLED, moveEnabled);
+		
+		saveConfig();
+	}
+	
+	public String getMoveDirectory() {
+		return propertiesConfiguration.getString(MOVE_DIRECTORY);
+	}
+	
+	public void setMoveDirectory(String moveDirectory) {
+		
+		propertiesConfiguration.setProperty(MOVE_DIRECTORY, moveDirectory);
+		
+		saveConfig();
+	}
+	
 	public void setFilterExpressions(List<String> filters) {
 
 		propertiesConfiguration.setProperty(FILE_FILTER_LIST, filters);

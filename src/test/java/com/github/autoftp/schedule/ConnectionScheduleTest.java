@@ -276,7 +276,7 @@ public class ConnectionScheduleTest {
 
 		inOrder.verify(mockListener).onDownloadStarted("File 1");
 		inOrder.verify(mockConnection).download(fileToDownload, "local/directory");
-		inOrder.verify(mockListener).onDownloadFinished();
+		inOrder.verify(mockListener).onDownloadFinished("File 1");
 	}
 
 	@Test
@@ -293,7 +293,7 @@ public class ConnectionScheduleTest {
 		connectionScheduler.downloadFile(fileToDownload);
 
 		verify(mockListener).onError("Unable to download file");
-		verify(mockListener, times(0)).onDownloadFinished();
+		verify(mockListener, times(0)).onDownloadFinished("File 1");
 	}
 
 	@Test

@@ -46,7 +46,7 @@ public class TestRunner implements ConnectionListener {
 	}
 
 	@Override
-	public void onDownloadFinished() {
+	public void onDownloadFinished(String filename) {
 		System.out.println("Download complete.");
 	}
 

@@ -41,6 +41,8 @@ public class SettingsProviderTest {
 	private static final String LAST_RUN = "last-run";
 	private static final String APP_DOWNLOAD_DIR = "download-dir";
 	private static final String FILE_FILTER_LIST = "filters.expression";
+	private static final String MOVE_ENABLED = "move.enabled";
+	private static final String MOVE_DIRECTORY = "move.directory";
 
 	private static final String THIS_IS_A_DOWNLOAD_DIR = "this/is/a/download/dir";
 
@@ -80,6 +82,40 @@ public class SettingsProviderTest {
 		settingsProvider.setDownloadDirectory(THIS_IS_A_DOWNLOAD_DIR);
 	}
 
+	@Test
+	public void setMoveEnabledShouldCallPropertiesConfigurationToSetMoveEnabled() throws ConfigurationException {
+		
+		settingsProvider.setMoveEnabled(true);
+		
+		verify(propertiesConfiguration).setProperty(MOVE_ENABLED, true);
+		verify(propertiesConfiguration).save();
+	}
+	
+	@Test
+	public void isMoveEnabledShouldReturnValueFromProperties() {
+		
+		when(propertiesConfiguration.getBoolean(MOVE_ENABLED)).thenReturn(true);
+		
+		assertThat(settingsProvider.isMoveEnabled(), is(equalTo(true)));
+	}
+	
+	@Test
+	public void setMoveDirectoryShouldCallPropertiesConfigurationToSetMoveEnabled() throws ConfigurationException {
+		
+		settingsProvider.setMoveDirectory("dir");
+		
+		verify(propertiesConfiguration).setProperty(MOVE_DIRECTORY, "dir");
+		verify(propertiesConfiguration).save();
+	}
+	
+	@Test
+	public void getMoveDirectoryShouldReturnValueFromProperties() {
+		
+		when(propertiesConfiguration.getString(MOVE_DIRECTORY)).thenReturn("movedir");
+		
+		assertThat(settingsProvider.getMoveDirectory(), is(equalTo("movedir")));
+	}
+	
 	@Test
 	public void getDownloadDirectoryShouldCalLPropertiesConfigurationToGetDownloadDirectory() {
 

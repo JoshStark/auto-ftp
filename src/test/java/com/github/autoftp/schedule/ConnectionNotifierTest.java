@@ -86,9 +86,9 @@ public class ConnectionNotifierTest {
 	public void whenAFileHasFinishedDownloadingThenListenersShouldBeNotified() {
 
 		notifier.registerListener(listener);
-		notifier.notifyOnDownloadFinished();
+		notifier.notifyOnDownloadFinished("filename");
 
-		verify(listener).onDownloadFinished();
+		verify(listener).onDownloadFinished("filename");
 	}
 
 	@Test
@@ -113,11 +113,11 @@ public class ConnectionNotifierTest {
 		notifier.notifyOfConnectionClosing();
 		notifier.notifyOfFilesToDownload(filesToDownload);
 		notifier.notifyOnDownloadStart("File 1");
-		notifier.notifyOnDownloadFinished();
+		notifier.notifyOnDownloadFinished("File 1");
 		notifier.notifyOfError("Something bad happened");
 
 		verify(listener, times(3)).onError("Something bad happened");
-		verify(listener, times(3)).onDownloadFinished();
+		verify(listener, times(3)).onDownloadFinished("File 1");
 		verify(listener, times(3)).onDownloadStarted("File 1");
 		verify(listener, times(3)).onConnection();
 		verify(listener, times(3)).onDisconnection();
