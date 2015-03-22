@@ -12,17 +12,17 @@ import org.apache.http.impl.client.HttpClientBuilder;
 public class PushbulletConnection {
 
 	private String apiKey;
-	private HttpClient client;
 	private String apiUrl;
 
 	public PushbulletConnection(String apiUrl, String apiKey) {
 
 		this.apiUrl = apiUrl;
 		this.apiKey = apiKey;
-		this.client = HttpClientBuilder.create().build();
 	}
 
 	public void sendNotification(String title, String body) {
+
+		HttpClient client = HttpClientBuilder.create().build();
 
 		HttpPost request = new HttpPost(apiUrl);
 		request.addHeader("Authorization", "Bearer " + apiKey);

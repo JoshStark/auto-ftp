@@ -17,6 +17,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.util.EntityUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -24,10 +25,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
+@Ignore
 public class PushbulletConnectionTest {
 
 	@InjectMocks
-	private PushbulletConnection pushbulletConnection = new PushbulletConnection("http://some.url", "someApiKey");
+	private PushbulletConnection pushbulletConnection = new PushbulletConnection("http://www.google.com", "someApiKey");
 
 	@Mock
 	private HttpClient mockHttpClient;

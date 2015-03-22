@@ -47,12 +47,18 @@ public class ExternalNotificationStrategy implements ConnectionListener {
 	public void onDownloadFinished(String filename) {
 
 		try {
-			
+
 			pushbulletConnection.sendNotification("A new file has been downloaded", filename);
-			
+
 		} catch (PushbulletException e) {
-			
-			String formattedMessage = String.format("%s [Error]\t Unable to notify. Reason: %s", formattedTime(),
+
+			String formattedMessage = String.format("%s [Error]\t Unable to notify. Reason: %s", formattedTime(), e.getMessage());
+
+			System.out.println(formattedMessage);
+
+		} catch (Exception e) {
+
+			String formattedMessage = String.format("%s [Error]\t Unknown exception when notifying. Reason: %s", formattedTime(),
 			        e.getMessage());
 
 			System.out.println(formattedMessage);
