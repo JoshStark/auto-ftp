@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.github.autoftp.ConnectionListener;
 import com.github.autoftp.config.SettingsProvider;
+import com.github.autoftp.strategies.ExternalNotificationStrategy;
 import com.github.autoftp.strategies.MoveOnCompleteStrategy;
 
 public class ConnectionScheduleExecutor {
@@ -29,6 +30,9 @@ public class ConnectionScheduleExecutor {
 
 		if (settingsProvider.isMoveEnabled())
 			connectionSchedule.registerListener(new MoveOnCompleteStrategy());
+		
+		if (settingsProvider.isPushbulletNotificationEnabled())
+			connectionSchedule.registerListener(new ExternalNotificationStrategy());
 
 		int connectionInterval = settingsProvider.getConnectionInterval();
 

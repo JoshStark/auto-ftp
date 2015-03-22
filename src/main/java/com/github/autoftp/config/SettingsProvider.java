@@ -28,6 +28,8 @@ public class SettingsProvider {
 	private static final String FILE_FILTER_LIST = "filters.expression";
 	private static final String MOVE_ENABLED = "move.enabled";
 	private static final String MOVE_DIRECTORY = "move.directory";
+	private static final String PUSHBULLET_API_KEY = "pushbullet.api.key";
+	private static final String PUSHBULLET_NOTIFICATIONS_ENABLED = "pushbullet.notify.enabled";
 
 	private PropertiesConfiguration propertiesConfiguration;
 
@@ -69,25 +71,47 @@ public class SettingsProvider {
 	public boolean isMoveEnabled() {
 		return propertiesConfiguration.getBoolean(MOVE_ENABLED);
 	}
-	
+
 	public void setMoveEnabled(boolean moveEnabled) {
-		
+
 		propertiesConfiguration.setProperty(MOVE_ENABLED, moveEnabled);
-		
+
 		saveConfig();
 	}
-	
+
 	public String getMoveDirectory() {
 		return propertiesConfiguration.getString(MOVE_DIRECTORY);
 	}
-	
-	public void setMoveDirectory(String moveDirectory) {
-		
-		propertiesConfiguration.setProperty(MOVE_DIRECTORY, moveDirectory);
-		
+
+	public String getPushbulletApiKey() {
+		return propertiesConfiguration.getString(PUSHBULLET_API_KEY);
+	}
+
+	public void setPushbulletApiKey(String key) {
+
+		propertiesConfiguration.setProperty(PUSHBULLET_API_KEY, key);
+
 		saveConfig();
 	}
 	
+	public boolean isPushbulletNotificationEnabled() {
+		return propertiesConfiguration.getBoolean(PUSHBULLET_NOTIFICATIONS_ENABLED);
+	}
+	
+	public void setPushbulletNotificationEnabled(boolean enabled) {
+		
+		propertiesConfiguration.setProperty(PUSHBULLET_NOTIFICATIONS_ENABLED, enabled);
+
+		saveConfig();
+	}
+
+	public void setMoveDirectory(String moveDirectory) {
+
+		propertiesConfiguration.setProperty(MOVE_DIRECTORY, moveDirectory);
+
+		saveConfig();
+	}
+
 	public void setFilterExpressions(List<String> filters) {
 
 		propertiesConfiguration.setProperty(FILE_FILTER_LIST, filters);
@@ -148,16 +172,16 @@ public class SettingsProvider {
 	}
 
 	public void setConnectionInterval(int minutes) {
-		
+
 		propertiesConfiguration.setProperty(INTERVAL, minutes);
-		
+
 		saveConfig();
 	}
-	
+
 	public int getConnectionInterval() {
 		return propertiesConfiguration.getInt(INTERVAL);
 	}
-	
+
 	private void saveConfig() {
 
 		try {

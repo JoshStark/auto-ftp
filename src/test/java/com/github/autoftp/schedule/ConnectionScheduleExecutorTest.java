@@ -20,6 +20,7 @@ import org.mockito.Mock;
 
 import com.github.autoftp.ConnectionListener;
 import com.github.autoftp.config.SettingsProvider;
+import com.github.autoftp.strategies.ExternalNotificationStrategy;
 import com.github.autoftp.strategies.MoveOnCompleteStrategy;
 
 public class ConnectionScheduleExecutorTest {
@@ -85,5 +86,17 @@ public class ConnectionScheduleExecutorTest {
 		verify(mockConnectionSchedule, times(2)).registerListener(captor.capture());
 		
 		assertThat(captor.getAllValues().get(1), is(instanceOf(MoveOnCompleteStrategy.class)));
+	}
+	
+	@Test
+	public void ifPushbulletIsEnabledThenNotificationStrategyShouldBeEmployed() {
+
+		when(mockSettingsProvider.isPushbulletNotificationEnabled()).thenReturn(true);
+
+		executor.scheduleAndListen(listener);
+
+		verify(mockConnectionSchedule, times(2)).registerListener(captor.capture());
+		
+		assertThat(captor.getAllValues().get(1), is(instanceOf(ExternalNotificationStrategy.class)));
 	}
 }

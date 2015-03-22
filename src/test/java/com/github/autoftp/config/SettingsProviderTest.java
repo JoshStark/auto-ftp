@@ -43,6 +43,8 @@ public class SettingsProviderTest {
 	private static final String FILE_FILTER_LIST = "filters.expression";
 	private static final String MOVE_ENABLED = "move.enabled";
 	private static final String MOVE_DIRECTORY = "move.directory";
+	private static final String PUSHBULLET_API_KEY = "pushbullet.api.key";
+	private static final String PUSHBULLET_NOTIFICATIONS_ENABLED = "pushbullet.notify.enabled";
 
 	private static final String THIS_IS_A_DOWNLOAD_DIR = "this/is/a/download/dir";
 
@@ -81,6 +83,23 @@ public class SettingsProviderTest {
 
 		settingsProvider.setDownloadDirectory(THIS_IS_A_DOWNLOAD_DIR);
 	}
+	
+	@Test
+	public void setPushbulletNotificationEnabledShouldCallPropertiesConfigurationToSetMoveEnabled() throws ConfigurationException {
+		
+		settingsProvider.setPushbulletNotificationEnabled(true);
+		
+		verify(propertiesConfiguration).setProperty(PUSHBULLET_NOTIFICATIONS_ENABLED, true);
+		verify(propertiesConfiguration).save();
+	}
+	
+	@Test
+	public void isPushbulletNotificationEnabledShouldReturnValueFromProperties() {
+		
+		when(propertiesConfiguration.getBoolean(PUSHBULLET_NOTIFICATIONS_ENABLED)).thenReturn(true);
+		
+		assertThat(settingsProvider.isPushbulletNotificationEnabled(), is(equalTo(true)));
+	}
 
 	@Test
 	public void setMoveEnabledShouldCallPropertiesConfigurationToSetMoveEnabled() throws ConfigurationException {
@@ -114,6 +133,23 @@ public class SettingsProviderTest {
 		when(propertiesConfiguration.getString(MOVE_DIRECTORY)).thenReturn("movedir");
 		
 		assertThat(settingsProvider.getMoveDirectory(), is(equalTo("movedir")));
+	}
+	
+	@Test
+	public void setPushbulletApiKeyShouldCallPropertiesConfigurationToSetMoveEnabled() throws ConfigurationException {
+		
+		settingsProvider.setPushbulletApiKey("apikey");
+		
+		verify(propertiesConfiguration).setProperty(PUSHBULLET_API_KEY, "apikey");
+		verify(propertiesConfiguration).save();
+	}
+	
+	@Test
+	public void getPushbulletApiKeyShouldReturnValueFromProperties() {
+		
+		when(propertiesConfiguration.getString(PUSHBULLET_API_KEY)).thenReturn("apikey");
+		
+		assertThat(settingsProvider.getPushbulletApiKey(), is(equalTo("apikey")));
 	}
 	
 	@Test
