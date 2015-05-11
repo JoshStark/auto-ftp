@@ -31,7 +31,7 @@ public class ConnectionSchedule extends ConnectionNotifier implements Runnable {
 	public ConnectionSchedule() {
 
 		clientFactory = new ClientFactory();
-		settingsProvider = new SettingsProvider();
+		settingsProvider = new SettingsProvider("/etc/autoftp/autoftp.conf");
 		patternBuilder = new PatternBuilder();
 	}
 

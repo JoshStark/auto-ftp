@@ -15,7 +15,6 @@ import org.joda.time.DateTime;
 
 public class SettingsProvider {
 
-	private static final String CONFIG_FILE = "autoftp.conf";
 	private static final String INTERVAL = "interval";
 	private static final String HOST_FILE_DIR = "host.file-dir";
 	private static final String HOST_PORT = "host.port";
@@ -31,16 +30,20 @@ public class SettingsProvider {
 	private static final String PUSHBULLET_API_KEY = "pushbullet.api.key";
 	private static final String PUSHBULLET_NOTIFICATIONS_ENABLED = "pushbullet.notify.enabled";
 
+	private String configFileLocation;
+
 	private PropertiesConfiguration propertiesConfiguration;
 
-	public SettingsProvider() {
+	public SettingsProvider(String configFileLocation) {
 
+		this.configFileLocation = configFileLocation;
+		
 		loadConfig();
 	}
 
 	protected void loadConfig() {
 
-		File xmlConfigFile = new File(CONFIG_FILE);
+		File xmlConfigFile = new File(configFileLocation);
 
 		try {
 

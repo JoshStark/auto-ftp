@@ -30,7 +30,7 @@ import org.mockito.Mock;
 
 public class SettingsProviderTest {
 
-	private static final String CONFIG_FILE = "autoftp.conf";
+	private static final String CONFIG_FILE = "build/autoftp.conf";
 	private static final String INTERVAL = "interval";
 	private static final String HOST_FILE_DIR = "host.file-dir";
 	private static final String HOST_PORT = "host.port";
@@ -49,7 +49,7 @@ public class SettingsProviderTest {
 	private static final String THIS_IS_A_DOWNLOAD_DIR = "this/is/a/download/dir";
 
 	@InjectMocks
-	private SettingsProvider settingsProvider = new SettingsProvider();
+	private SettingsProvider settingsProvider = new SettingsProvider("build/autoftp.conf");
 
 	@Mock
 	private PropertiesConfiguration propertiesConfiguration;
@@ -59,8 +59,9 @@ public class SettingsProviderTest {
 
 	@Before
 	public void setUp() {
+		
 		initMocks(this);
-
+		
 		when(propertiesConfiguration.getList(FILE_FILTER_LIST)).thenReturn(initFilterList());
 	}
 
@@ -308,7 +309,7 @@ public class SettingsProviderTest {
 		File file = new File(CONFIG_FILE);
 		file.delete();
 		
-		new SettingsProvider();
+		new SettingsProvider("build/autoftp.conf");
 		
 		assertThat(new File(CONFIG_FILE).exists(), is(equalTo(true)));
 	}

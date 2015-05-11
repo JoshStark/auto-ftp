@@ -20,7 +20,7 @@ public class ConnectionScheduleExecutor {
 	public ConnectionScheduleExecutor() {
 
 		scheduledExecutorService = Executors.newScheduledThreadPool(1);
-		settingsProvider = new SettingsProvider();
+		settingsProvider = new SettingsProvider("/etc/autoftp/autoftp.conf");
 		connectionSchedule = new ConnectionSchedule();
 	}
 

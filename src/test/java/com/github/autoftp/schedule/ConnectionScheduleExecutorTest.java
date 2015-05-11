@@ -45,6 +45,7 @@ public class ConnectionScheduleExecutorTest {
 
 	@Before
 	public void setUp() {
+		
 		initMocks(this);
 
 		when(mockSettingsProvider.isMoveEnabled()).thenReturn(false);

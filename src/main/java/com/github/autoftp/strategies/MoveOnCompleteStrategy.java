@@ -19,7 +19,7 @@ public class MoveOnCompleteStrategy implements ConnectionListener {
 
 	public MoveOnCompleteStrategy() {
 
-		settingsProvider = new SettingsProvider();
+		settingsProvider = new SettingsProvider("/etc/autoftp/autoftp.conf");
 		fileFactory = new FileUtilities();
 	}
 

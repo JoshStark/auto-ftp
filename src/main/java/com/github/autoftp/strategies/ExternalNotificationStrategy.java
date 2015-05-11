@@ -18,7 +18,7 @@ public class ExternalNotificationStrategy implements ConnectionListener {
 
 	public ExternalNotificationStrategy() {
 
-		this.settingsProvider = new SettingsProvider();
+		this.settingsProvider = new SettingsProvider("/etc/autoftp/autoftp.conf");
 		this.pushbulletConnection = new PushbulletConnection("https://api.pushbullet.com/v2/pushes",
 		        settingsProvider.getPushbulletApiKey());
 	}
