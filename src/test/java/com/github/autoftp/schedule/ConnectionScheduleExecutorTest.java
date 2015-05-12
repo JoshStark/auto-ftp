@@ -12,6 +12,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -23,6 +24,7 @@ import com.github.autoftp.config.SettingsProvider;
 import com.github.autoftp.strategies.ExternalNotificationStrategy;
 import com.github.autoftp.strategies.MoveOnCompleteStrategy;
 
+@Ignore
 public class ConnectionScheduleExecutorTest {
 
 	@InjectMocks

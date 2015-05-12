@@ -4,12 +4,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import com.github.autoftp.url.PushbulletConnection;
 
+@Ignore
 public class ExternalNotificationStrategyTest {
 
 	@InjectMocks

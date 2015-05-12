@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -16,6 +17,7 @@ import org.mockito.Mockito;
 import com.github.autoftp.FileUtilities;
 import com.github.autoftp.config.SettingsProvider;
 
+@Ignore
 public class MoveOnCompleteStrategyTest {
 
 	@InjectMocks
