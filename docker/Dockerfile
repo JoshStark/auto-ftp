@@ -5,7 +5,6 @@ RUN apt-get -y install openjdk-7-jre && apt-get clean
 RUN mkdir /opt/autoftp
 RUN mkdir -p /download/doing
 RUN mkdir -p /download/done
-RUN chown docker:docker /download/doing /download/done
 ADD https://github.com/JAGFin1/auto-ftp/releases/download/1.1/auto-ftp.jar /opt/autoftp/
 WORKDIR /opt/autoftp
 CMD ["java", "-jar", "-Xms30M", "-Xmx100M", "auto-ftp.jar"]
