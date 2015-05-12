@@ -156,7 +156,7 @@ public class ConnectionSchedule extends ConnectionNotifier implements Runnable {
 			notifyOnDownloadFinished(fileToDownload.getName());
 
 		} catch (DownloadFailedException e) {
-			notifyOfError(e.getMessage());
+			notifyOfError(e.getMessage() + (null == e.getCause() ? "" : e.getCause().getMessage()));
 		}
 	}
 
