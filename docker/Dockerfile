@@ -6,8 +6,8 @@ RUN apt-get update && apt-get -y install openjdk-7-jre && apt-get clean
 
 # Set up a default application user for within the container
 # We don't want the app running as root, so this user defaults to 1000
-RUN groupadd autoftp && \
-    useradd autoftp -g autoftp -u 1000
+RUN groupadd -r autoftp -g 1000 && \
+    useradd -u 1000 -r -g autoftp -s /sbin/nologin -c "AutoFTP User" autoftp
 
 # Configure the running and downloadable directories
 RUN mkdir /opt/autoftp
