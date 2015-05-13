@@ -21,6 +21,8 @@ RUN chown autoftp:autoftp /opt/autoftp && \
 # Get hold of the latest stable release of AutoFTP as an executable
 ADD https://github.com/JAGFin1/auto-ftp/releases/download/1.2/auto-ftp.jar /opt/autoftp/
 
+RUN chown autoftp:autoftp /opt/autoftp/auto-ftp.jar
+
 WORKDIR /opt/autoftp
 USER autoftp
 
