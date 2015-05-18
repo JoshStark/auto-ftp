@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM phusion/baseimage:0.9.16
 MAINTAINER Josh Stark <jagfin1@gmail.com>
 
 # Get hold of latest stable release of Java 7
